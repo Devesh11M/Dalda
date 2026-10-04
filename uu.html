@@ -1,106 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>पाठ(देवेश सर)</title>
-<script>
-  document.addEventListener('contextmenu', event => event.preventDefault());
-  document.addEventListener('keydown', event => {
-    if (event.ctrlKey && (event.key === 'u' || event.key === 'U')) {
-      event.preventDefault();
-    }
-  });
-</script>
-<script>
-        function getRandomColor() {
-            const letters = '0123456789ABCDEF';
-            let color = '#';
-            for (let i = 0; i < 6; i++) {
-                color += letters[Math.floor(Math.random() * 16)];
-            }
-            return color;
-        }
-        setInterval(() => {
-            document.body.style.backgroundColor = getRandomColor();
-        }, 3500);
-</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Devesh Sir Tally Playlist</title>
 <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align:left;
-      margin: 20px;
-    }
-    select {
-      vertical-align:top;
-      padding: 10px;
-      font-size: 16px;
-      background-color:yellow;
-    }
-    label {
-      vertical-align:top;
-      padding: 10px;
-      font-size: 16px;
-      color:red;
-      background-color:yellow;
-      font-style:bold;
-      font-style:italic;
-    }
-    h1{
-      background-color:yellow;
-      font-style:bold;
-      font-style:italic;
-      text-shadow: 2px 2px 5px red;
-    }
-    iframe{
-      margin-top: 20px;
-      width: 90%;
-      max-width: 900px;
-      border-radius:25px;
-    }
-    @media (max-width: 600px) {
-        iframe{
-            width: 90vw;
-            height: 40vh;
-            border-radius:25px;
-       }
-    }
-    @media (min-width: 1200px) {
-        iframe{
-            width: 40vw;
-            height: 60vh;
-            background-color: seagreen;
-            border-radius:25px;
-        }
-    }  
+body{background:#e91e8c; text-align:center; font-family:Arial;}
+#mainPlayer{width:90%; max-width:800px; height:400px; border-radius:20px; border:none;}
+.btn{display:block; width:90%; max-width:800px; margin:8px auto; padding:12px; background:yellow; border:none; border-radius:10px; font-size:16px; cursor:pointer; text-align:left;}
+.btn:hover{background:orange;}
+h1{background:yellow; display:inline-block; padding:5px 20px; border-radius:10px;}
 </style>
 </head>
 <body>
-<marquee direction="left"><h1><pre>START The Lession Lession Lession  Lession Lession Lession Lession  Lession Lession END.....</pre></h1></marquee>
-  
-  <label for="videoDropdown">Choose a video:👉</label>
-  <select id="videoDropdown">
-    <option value="">-- Aapki YouTube Playlist Chal Rahi Hai --</option>
-  </select>
+<h1>Devesh Sir - Tally Prime Full Course (22 Videos)</h1>
+<iframe id="mainPlayer" src="https://www.youtube.com/embed/videoseries?list=PLYazKoZJJto_fOBHijYa1fWwZK7l0SVy5" allowfullscreen></iframe>
 
-  <iframe id="videoPlayer" 
-    src="https://www.youtube.com/embed/videoseries?list=PLYazKoZJJto_fOBHijYa1fWwZK7l0SVy5" 
-    width="640" 
-    height="480" 
-    allow="autoplay"
-    allowfullscreen>
-  </iframe>
+<div id="list"></div>
 
-  <script>
-    // Ab ye playlist YouTube se chalegi, Drive ka link khatam
-    const videoDropdown = document.getElementById('videoDropdown');
-    const videoPlayer = document.getElementById('videoPlayer');
-    
-    // Simple info ke liye
-    videoDropdown.addEventListener('change', function() {
-      // Future me yahan API se title aayenge
-      console.log("Playlist is running: PLYazKoZJJto_fOBHijYa1fWwZK7l0SVy5");
-    });
-  </script>
+<script>
+const PLAYLIST_ID = "PLYazKoZJJto_fOBHijYa1fWwZK7l0SVy5";
+const player = document.getElementById('mainPlayer');
+const container = document.getElementById('list');
+
+// 22 videos ke liye 22 button bana rahe hain
+for(let i=1; i<=22; i++){
+  let b = document.createElement('button');
+  b.className = 'btn';
+  b.innerText = "▶️ Part " + i + " - Play Video " + i;
+  b.onclick = function(){
+    // Index se video change hoga
+    player.src = `https://www.youtube.com/embed/videoseries?list=${PLAYLIST_ID}&index=${i}`;
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+  container.appendChild(b);
+}
+</script>
 </body>
 </html>
