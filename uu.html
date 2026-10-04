@@ -26,59 +26,81 @@
         }, 3500);
 </script>
 <style>
-    body { font-family: Arial, sans-serif; text-align:left; margin: 20px; }
-    select { vertical-align:top; padding: 10px; font-size: 16px; background-color:yellow; min-width: 300px; }
-    label { vertical-align:top; padding: 10px; font-size: 16px; color:red; background-color:yellow; font-style:bold; font-style:italic; }
-    h1{ background-color:yellow; font-style:bold; font-style:italic; text-shadow: 2px 2px 5px red; }
-    iframe{ margin-top: 20px; width: 90%; max-width: 900px; border-radius:25px; }
-    @media (max-width: 600px) { iframe{ width: 90vw; height: 40vh; border-radius:25px; } }
-    @media (min-width: 1200px) { iframe{ width: 40vw; height: 60vh; background-color: seagreen; border-radius:25px; } }  
+    body {
+      font-family: Arial, sans-serif;
+      text-align:left;
+      margin: 20px;
+    }
+    select {
+      vertical-align:top;
+      padding: 10px;
+      font-size: 16px;
+      background-color:yellow;
+    }
+    label {
+      vertical-align:top;
+      padding: 10px;
+      font-size: 16px;
+      color:red;
+      background-color:yellow;
+      font-style:bold;
+      font-style:italic;
+    }
+    h1{
+      background-color:yellow;
+      font-style:bold;
+      font-style:italic;
+      text-shadow: 2px 2px 5px red;
+    }
+    iframe{
+      margin-top: 20px;
+      width: 90%;
+      max-width: 900px;
+      border-radius:25px;
+    }
+    @media (max-width: 600px) {
+        iframe{
+            width: 90vw;
+            height: 40vh;
+            border-radius:25px;
+       }
+    }
+    @media (min-width: 1200px) {
+        iframe{
+            width: 40vw;
+            height: 60vh;
+            background-color: seagreen;
+            border-radius:25px;
+        }
+    }  
 </style>
 </head>
 <body>
 <marquee direction="left"><h1><pre>START The Lession Lession Lession  Lession Lession Lession Lession  Lession Lession END.....</pre></h1></marquee>
   
-  <label for="videoDropdown">Choose a video: 👉</label>
+  <label for="videoDropdown">Choose a video:👉</label>
   <select id="videoDropdown">
-    <option>Loading YouTube Playlist... Please Wait 👉</option>
+    <option value="">-- Aapki YouTube Playlist Chal Rahi Hai --</option>
   </select>
 
   <iframe id="videoPlayer" 
-    src="https://www.youtube.com/embed/videoseries?list=PLYazKoZJJto_fOBhiJYa1fWwZK7l0SVy5" 
-    width="640" height="480" allow="autoplay" allowfullscreen>
+    src="https://www.youtube.com/embed/videoseries?list=PLYazKoZJJto_fOBHijYa1fWwZK7l0SVy5" 
+    width="640" 
+    height="480" 
+    allow="autoplay"
+    allowfullscreen>
   </iframe>
 
   <script>
-    const PLAYLIST_ID = "PLYazKoZJJto_fOBhiJYa1fWwZK7l0SVy5";
-    const API_KEY = ""; // YAHAN APNA YOUTUBE API KEY DAALO
-
+    // Ab ye playlist YouTube se chalegi, Drive ka link khatam
     const videoDropdown = document.getElementById('videoDropdown');
     const videoPlayer = document.getElementById('videoPlayer');
-
-    async function loadPlaylist() {
-      if (!API_KEY) {
-        videoDropdown.innerHTML = '<option>Playlist chal raha hai - API Key dalne par video ke naam auto aayenge 👉</option>';
-        return;
-      }
-      try {
-        const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${PLAYLIST_ID}&key=${API_KEY}`;
-        const res = await fetch(url);
-        const data = await res.json();
-        if (!data.items) { videoDropdown.innerHTML = '<option>API Key galat hai ya Playlist Private hai 👉</option>'; return; }
-        videoDropdown.innerHTML = "";
-        data.items.forEach((item, index) => {
-          const videoId = item.snippet.resourceId.videoId;
-          const title = item.snippet.title;
-          const option = document.createElement('option');
-          option.value = `https://www.youtube.com/embed/${videoId}?list=${PLAYLIST_ID}`;
-          option.textContent = title + " 👉";
-          videoDropdown.appendChild(option);
-          if (index === 0) { videoPlayer.src = option.value; }
-        });
-        videoDropdown.addEventListener('change', function() { if(this.value){ videoPlayer.src = this.value; } });
-      } catch (e) { console.log(e); }
-    }
-    if(API_KEY && API_KEY !== ""){ loadPlaylist(); }
+    
+    // Simple info ke liye
+    videoDropdown.addEventListener('change', function() {
+      // Future me yahan API se title aayenge
+      console.log("Playlist is running: PLYazKoZJJto_fOBHijYa1fWwZK7l0SVy5");
+    });
   </script>
 </body>
 </html>
