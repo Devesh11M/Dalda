@@ -1,46 +1,70 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Devesh Sir Tally Playlist</title>
+<title>Devesh Sir - Tally Playlist</title>
 <style>
-body{background:#e91e8c; text-align:center; font-family:Arial; margin:0; padding:10px;}
-#mainPlayer{width:95%; max-width:800px; height:420px; border-radius:20px; border:3px solid yellow; background:black;}
-.btn{display:block; width:95%; max-width:800px; margin:8px auto; padding:12px; background:yellow; border:none; border-radius:10px; font-size:16px; cursor:pointer; text-align:left; font-weight:bold;}
-.btn:hover{background:orange; transform:scale(1.02);}
-.btn.active{background:orange; border:2px solid red;}
-h1{background:yellow; display:inline-block; padding:8px 20px; border-radius:10px; font-size:18px;}
+body{background:#ff1a8a; margin:0; padding:10px; font-family:Arial; text-align:center;}
+h1{background:yellow; display:inline-block; padding:10px 20px; border-radius:12px; margin:10px; font-size:20px;}
+#mainBox{max-width:900px; margin:auto;}
+#mainPlayer{width:100%; height:460px; border-radius:20px; border:4px solid yellow; background:black;}
+#playlistGrid{display:grid; grid-template-columns:repeat(auto-fill, minmax(250px,1fr)); gap:12px; margin-top:20px; max-width:900px; margin-left:auto; margin-right:auto;}
+.card{background:white; border-radius:12px; overflow:hidden; cursor:pointer; text-align:left; box-shadow:0 2px 8px rgba(0,0,0,0.3); transition:0.2s;}
+.card:hover{transform:scale(1.03);}
+.card img{width:100%; height:140px; object-fit:cover;}
+.card p{margin:8px; font-size:14px; font-weight:bold; color:#222; height:40px; overflow:hidden;}
+.card.active{outline:4px solid yellow;}
 </style>
 </head>
 <body>
-<h1>Devesh Sir - Tally Prime Full Course (22 Videos)</h1>
-<br>
-<iframe id="mainPlayer" src="https://www.youtube.com/embed?listType=playlist&list=PLYazKoZJJto_fOBHijYa1fWwZK7l0SVy5&index=0" allowfullscreen allow="autoplay"></iframe>
 
-<div id="list"></div>
+<h1>Devesh Sir - Tally Prime Full Course</h1>
+<div id="mainBox">
+<iframe id="mainPlayer" src="https://www.youtube.com/embed?listType=playlist&list=PLYazKoZJJto_fOBHijYa1fWwZK7l0SVy5&index=0" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+</div>
+
+<div id="playlistGrid">Loading videos...</div>
 
 <script>
 const PLAYLIST_ID = "PLYazKoZJJto_fOBHijYa1fWwZK7l0SVy5";
-const player = document.getElementById('mainPlayer');
-const container = document.getElementById('list');
+const mainPlayer = document.getElementById('mainPlayer');
+const grid = document.getElementById('playlistGrid');
 
-for(let i=1; i<=22; i++){
-  let b = document.createElement('button');
-  b.className = 'btn';
-  if(i==1) b.classList.add('active');
-  b.innerText = "▶️ Part " + i + " - Click to Play Video " + i;
-  b.onclick = function(){
-    // Ye sahi tarika hai playlist me video badalne ka
-    player.src = `https://www.youtube.com/embed?listType=playlist&list=${PLAYLIST_ID}&index=${i-1}&autoplay=1`;
-    
-    // active button ka color change
-    document.querySelectorAll('.btn').forEach(x=>x.classList.remove('active'));
-    b.classList.add('active');
-    window.scrollTo({top:0, behavior:'smooth'});
+// No API Key wala free method
+fetch(`https://yt.lemnoslife.com/noKey/playlistItems?part=snippet&playlistId=${PLAYLIST_ID}&maxResults=50`)
+.then(r=>r.json())
+.then(data=>{
+  grid.innerHTML = "";
+  let seen = new Set(); // duplicate hatane ke liye
+  data.items.forEach((item, idx)=>{
+    const vid = item.snippet.resourceId.videoId;
+    if(seen.has(vid)) return; // agar video pehle aa chuka hai to skip
+    seen.add(vid);
+    const title = item.snippet.title;
+    const thumb = item.snippet.thumbnails.medium.url;
+
+    let div = document.createElement('div');
+    div.className = 'card' + (idx==0?' active':'');
+    div.innerHTML = `<img src="${thumb}"><p>${title}</p>`;
+    div.onclick = ()=>{
+      mainPlayer.src = `https://www.youtube.com/embed/${vid}?list=${PLAYLIST_ID}&autoplay=1`;
+      document.querySelectorAll('.card').forEach(c=>c.classList.remove('active'));
+      div.classList.add('active');
+      window.scrollTo({top:0, behavior:'smooth'});
+    };
+    grid.appendChild(div);
+  });
+
+  if(data.items.length==0){
+    grid.innerHTML = "Playlist private hai ya videos nahi mile. YouTube Studio me playlist ko Public kar do.";
   }
-  container.appendChild(b);
-}
+})
+.catch(e=>{
+  grid.innerHTML = "Thumbnail load nahi hua, par upar wala player chalega. Right side ke 3 dot se list kholo.";
+  console.log(e);
+});
 </script>
+
 </body>
 </html>
