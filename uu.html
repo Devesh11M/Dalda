@@ -5,16 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Devesh Sir Tally Playlist</title>
 <style>
-body{background:#e91e8c; text-align:center; font-family:Arial;}
-#mainPlayer{width:90%; max-width:800px; height:400px; border-radius:20px; border:none;}
-.btn{display:block; width:90%; max-width:800px; margin:8px auto; padding:12px; background:yellow; border:none; border-radius:10px; font-size:16px; cursor:pointer; text-align:left;}
-.btn:hover{background:orange;}
-h1{background:yellow; display:inline-block; padding:5px 20px; border-radius:10px;}
+body{background:#e91e8c; text-align:center; font-family:Arial; margin:0; padding:10px;}
+#mainPlayer{width:95%; max-width:800px; height:420px; border-radius:20px; border:3px solid yellow; background:black;}
+.btn{display:block; width:95%; max-width:800px; margin:8px auto; padding:12px; background:yellow; border:none; border-radius:10px; font-size:16px; cursor:pointer; text-align:left; font-weight:bold;}
+.btn:hover{background:orange; transform:scale(1.02);}
+.btn.active{background:orange; border:2px solid red;}
+h1{background:yellow; display:inline-block; padding:8px 20px; border-radius:10px; font-size:18px;}
 </style>
 </head>
 <body>
 <h1>Devesh Sir - Tally Prime Full Course (22 Videos)</h1>
-<iframe id="mainPlayer" src="https://www.youtube.com/embed/videoseries?list=PLYazKoZJJto_fOBHijYa1fWwZK7l0SVy5" allowfullscreen></iframe>
+<br>
+<iframe id="mainPlayer" src="https://www.youtube.com/embed?listType=playlist&list=PLYazKoZJJto_fOBHijYa1fWwZK7l0SVy5&index=0" allowfullscreen allow="autoplay"></iframe>
 
 <div id="list"></div>
 
@@ -23,14 +25,18 @@ const PLAYLIST_ID = "PLYazKoZJJto_fOBHijYa1fWwZK7l0SVy5";
 const player = document.getElementById('mainPlayer');
 const container = document.getElementById('list');
 
-// 22 videos ke liye 22 button bana rahe hain
 for(let i=1; i<=22; i++){
   let b = document.createElement('button');
   b.className = 'btn';
-  b.innerText = "▶️ Part " + i + " - Play Video " + i;
+  if(i==1) b.classList.add('active');
+  b.innerText = "▶️ Part " + i + " - Click to Play Video " + i;
   b.onclick = function(){
-    // Index se video change hoga
-    player.src = `https://www.youtube.com/embed/videoseries?list=${PLAYLIST_ID}&index=${i}`;
+    // Ye sahi tarika hai playlist me video badalne ka
+    player.src = `https://www.youtube.com/embed?listType=playlist&list=${PLAYLIST_ID}&index=${i-1}&autoplay=1`;
+    
+    // active button ka color change
+    document.querySelectorAll('.btn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
     window.scrollTo({top:0, behavior:'smooth'});
   }
   container.appendChild(b);
