@@ -1,70 +1,64 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Devesh Sir - Tally Playlist</title>
+<title>Devesh Sir Tally</title>
 <style>
 body{background:#ff1a8a; margin:0; padding:10px; font-family:Arial; text-align:center;}
-h1{background:yellow; display:inline-block; padding:10px 20px; border-radius:12px; margin:10px; font-size:20px;}
-#mainBox{max-width:900px; margin:auto;}
-#mainPlayer{width:100%; height:460px; border-radius:20px; border:4px solid yellow; background:black;}
-#playlistGrid{display:grid; grid-template-columns:repeat(auto-fill, minmax(250px,1fr)); gap:12px; margin-top:20px; max-width:900px; margin-left:auto; margin-right:auto;}
-.card{background:white; border-radius:12px; overflow:hidden; cursor:pointer; text-align:left; box-shadow:0 2px 8px rgba(0,0,0,0.3); transition:0.2s;}
-.card:hover{transform:scale(1.03);}
-.card img{width:100%; height:140px; object-fit:cover;}
-.card p{margin:8px; font-size:14px; font-weight:bold; color:#222; height:40px; overflow:hidden;}
+h1{background:yellow; display:inline-block; padding:10px 20px; border-radius:12px; font-size:20px;}
+#mainPlayer{width:95%; max-width:900px; height:460px; border-radius:20px; border:4px solid yellow; background:black;}
+#grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(220px,1fr)); gap:12px; max-width:900px; margin:20px auto;}
+.card{background:white; border-radius:12px; overflow:hidden; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.3);}
+.card img{width:100%; height:130px; object-fit:cover;}
+.card p{margin:8px; font-size:13px; font-weight:bold; text-align:left; height:38px; overflow:hidden;}
 .card.active{outline:4px solid yellow;}
 </style>
 </head>
 <body>
-
-<h1>Devesh Sir - Tally Prime Full Course</h1>
-<div id="mainBox">
-<iframe id="mainPlayer" src="https://www.youtube.com/embed?listType=playlist&list=PLYazKoZJJto_fOBHijYa1fWwZK7l0SVy5&index=0" allowfullscreen allow="autoplay; encrypted-media"></iframe>
-</div>
-
-<div id="playlistGrid">Loading videos...</div>
+<h1>Devesh Sir - Tally Prime Course (22 Videos)</h1>
+<br>
+<iframe id="mainPlayer" src="https://www.youtube.com/embed?listType=playlist&list=PLYazKoZJJto_fOBHijYa1fWwZK7l0SVy5&index=0" allowfullscreen></iframe>
+<div id="grid">Loading thumbnails... 2 second ruko DEVA</div>
 
 <script>
 const PLAYLIST_ID = "PLYazKoZJJto_fOBHijYa1fWwZK7l0SVy5";
-const mainPlayer = document.getElementById('mainPlayer');
-const grid = document.getElementById('playlistGrid');
+const grid = document.getElementById('grid');
+const player = document.getElementById('mainPlayer');
 
-// No API Key wala free method
-fetch(`https://yt.lemnoslife.com/noKey/playlistItems?part=snippet&playlistId=${PLAYLIST_ID}&maxResults=50`)
+// RSS wala method - ye GitHub par block nahi hota
+fetch(`https://api.rss2json.com/v1/api.json?rss_url=https://www.youtube.com/feeds/videos.xml?playlist_id=${PLAYLIST_ID}`)
 .then(r=>r.json())
 .then(data=>{
   grid.innerHTML = "";
-  let seen = new Set(); // duplicate hatane ke liye
+  if(!data.items || data.items.length==0){
+    grid.innerHTML = "YouTube ne playlist ka RSS band kar diya hai. Neeche wala Permanent wala code use karo.";
+    return;
+  }
+  let seen = new Set();
   data.items.forEach((item, idx)=>{
-    const vid = item.snippet.resourceId.videoId;
-    if(seen.has(vid)) return; // agar video pehle aa chuka hai to skip
+    const link = item.link; // https://www.youtube.com/watch?v=XXXX
+    const vid = link.split('v=')[1];
+    if(seen.has(vid)) return;
     seen.add(vid);
-    const title = item.snippet.title;
-    const thumb = item.snippet.thumbnails.medium.url;
+    const title = item.title;
+    const thumb = `https://i.ytimg.com/vi/${vid}/mqdefault.jpg`;
 
     let div = document.createElement('div');
     div.className = 'card' + (idx==0?' active':'');
     div.innerHTML = `<img src="${thumb}"><p>${title}</p>`;
     div.onclick = ()=>{
-      mainPlayer.src = `https://www.youtube.com/embed/${vid}?list=${PLAYLIST_ID}&autoplay=1`;
+      player.src = `https://www.youtube.com/embed/${vid}?list=${PLAYLIST_ID}&autoplay=1`;
       document.querySelectorAll('.card').forEach(c=>c.classList.remove('active'));
       div.classList.add('active');
       window.scrollTo({top:0, behavior:'smooth'});
     };
     grid.appendChild(div);
   });
-
-  if(data.items.length==0){
-    grid.innerHTML = "Playlist private hai ya videos nahi mile. YouTube Studio me playlist ko Public kar do.";
-  }
 })
-.catch(e=>{
-  grid.innerHTML = "Thumbnail load nahi hua, par upar wala player chalega. Right side ke 3 dot se list kholo.";
-  console.log(e);
+.catch(err=>{
+  grid.innerHTML = "Internet slow hai, thumbnails load nahi hue. Upar wala player chal raha hai, right side ke 3 dot se aap 22 videos dekh sakte ho.";
 });
 </script>
-
 </body>
 </html>
