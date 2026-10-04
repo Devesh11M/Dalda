@@ -2,136 +2,96 @@
 <html lang="hi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tally Prime - 22 Videos</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#0f0f0f;color:#fff;font-family:Segoe UI,sans-serif; user-select:none; -webkit-user-select:none;}
-.container{max-width:1100px;margin:0 auto;padding:0;}
-.top-title{padding:15px; font-size:20px; font-weight:bold;}
+body{background:#0f0f0f;color:#fff;font-family:sans-serif;user-select:none; -webkit-user-select:none;}
+.container{max-width:900px;margin:auto;padding:10px;}
+.player-wrapper{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden;}
+.player-wrapper iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0;}
 
-/* PLAYER - NO GREY PATTI */
-.player-wrapper{
-  position:relative;
-  width:100%;
-  aspect-ratio:16/9;
-  background:#000;
-  overflow:hidden;
-}
-.player-wrapper iframe{
-  position:absolute; top:0; left:0;
-  width:100%; height:100%;
-  border:0;
-}
-
-/* CUSTOM COMBO BOX WITH RADIO + THUMBNAIL */
-.custom-select{position:relative; width:95%; margin:15px auto;}
-.select-btn{
-  width:100%; padding:12px; background:#1f1f1f; border:1px solid #444; 
-  border-radius:12px; color:#fff; display:flex; align-items:center; 
-  gap:12px; cursor:pointer; text-align:left;
-}
-.select-btn img{width:70px; border-radius:6px;}
-.select-dropdown{
-  position:absolute; top:110%; left:0; width:100%; 
-  background:#1e1e1e; border:1px solid #333; border-radius:12px;
-  max-height:400px; overflow-y:auto; display:none; z-index:999;
-}
+/* CUSTOM COMBO BOX */
+.custom-select{position:relative;width:100%;margin:15px 0;}
+.select-button{width:100%;padding:12px;background:#1f1f1f;border:1px solid #444;border-radius:10px;color:#fff;text-align:left;cursor:pointer;display:flex;align-items:center;gap:10px;}
+.select-button img{width:60px;border-radius:6px;}
+.select-dropdown{position:absolute;top:110%;left:0;width:100%;background:#1f1f1f;border:1px solid #444;border-radius:10px;max-height:350px;overflow-y:auto;display:none;z-index:100;}
 .select-dropdown.show{display:block;}
-.drop-item{
-  display:flex; align-items:center; gap:10px; padding:10px;
-  border-bottom:1px solid #2a2a2a; cursor:pointer;
-}
-.drop-item:hover, .drop-item.active{background:#2a2a2a;}
-.drop-item img{width:110px; border-radius:6px; flex-shrink:0;}
-.drop-item span{font-size:14px; line-height:1.3;}
-.drop-item input{width:18px; height:18px; accent-color:red;}
+.dropdown-item{display:flex;align-items:center;gap:10px;padding:10px;cursor:pointer;border-bottom:1px solid #2a2a2a;}
+.dropdown-item:hover{background:#2a2a2a;}
+.dropdown-item img{width:90px;border-radius:6px;}
+.dropdown-item input[type="radio"]{accent-color:red; width:18px; height:18px;}
+.dropdown-item.active{background:#2a2a2a; border-left:3px solid red;}
 
-/* RESPONSIVE */
-@media(min-width:1024px){
-  .player-wrapper{border-radius:12px;}
-}
-@media(max-width:767px){
-  .top-title{font-size:16px;}
-}
-
-/* MOBILE LANDSCAPE - AUTO MOVE & FULL SCREEN */
-@media (orientation: landscape) and (max-height: 500px){
-  .player-wrapper{
-    position:fixed !important;
-    top:0; left:0;
-    width:100vw !important; height:100vh !important;
-    z-index:99999; border-radius:0;
-  }
-  .top-title, .custom-select{display:none !important;}
+/* ROTATE LOGIC */
+@media (orientation: landscape) and (max-height:500px){
+ .player-wrapper{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:9999;border-radius:0;}
+ .custom-select{display:none;}
 }
 </style>
 </head>
-<body oncontextmenu="return false">
+<body oncontextmenu="return false;">
 <div class="container">
-  <div class="top-title">Tally Prime - 22 Videos</div>
-  
-  <div class="player-wrapper">
-    <iframe id="player" src="" allowfullscreen allow="autoplay; fullscreen; accelerometer; gyroscope; picture-in-picture"></iframe>
-  </div>
+<h3 style="padding:10px 0">Tally Prime - 22 Videos</h3>
+<div class="player-wrapper"><iframe id="player" src="" allowfullscreen allow="fullscreen; accelerometer; gyroscope; autoplay"></iframe></div>
 
-  <div class="custom-select" id="customSelect">
-    <button class="select-btn" id="selectBtn">-- Video Select Karo --</button>
-    <div class="select-dropdown" id="selectDrop"></div>
-  </div>
+<!-- COMBO BOX WITH RADIO + THUMBNAIL -->
+<div class="custom-select" id="customSelect">
+  <button class="select-button" id="selectButton">-- Video Select Karo --</button>
+  <div class="select-dropdown" id="selectDropdown"></div>
+</div>
+<div id="error"></div>
 </div>
 
 <script>
-const API_KEY = "AIzaSyCjWH-e5A0oOC0LMuSI4LK7m-gzudnvj9Y";
-const PLAYLIST_ID = "PLYazKoZJJto_fOBHijYa1fWwZK7l0SVy5";// DEVA yahan apni original ID dalna, jo aapke purane code me thi
+const API_KEY = "AAIzaSyCjWH-e5A0oOC0LMuSI4LK7m-gzudnvj9Y";
+const PLAYLIST_ID = "PLYazKoZJJto_fOBHijYa1fWwZK7l0SVy5"; // <-- DEVA YAHAN APNI ID DALO
 
-const btn = document.getElementById('selectBtn');
-const drop = document.getElementById('selectDrop');
+const btn = document.getElementById('selectButton');
+const dropdown = document.getElementById('selectDropdown');
 const player = document.getElementById('player');
 
-btn.onclick = () => drop.classList.toggle('show');
+btn.onclick = ()=> dropdown.classList.toggle('show');
 
-async function load(){
-  // Aapke photo me jo video chal raha hai usi playlist se load hoga
-  const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=22&playlistId=${PLAYLIST_ID}&key=${API_KEY}`;
-  try{
-    const res = await fetch(url);
-    const data = await res.json();
-    if(data.error){ btn.textContent = "Playlist ID galat hai - Check karo"; return; }
+async function loadVideos(){
+ const res = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=22&playlistId=${PLAYLIST_ID}&key=${API_KEY}`);
+ const data = await res.json();
+ if(data.error){ document.getElementById('error').innerHTML = `<p style="color:red;padding:10px;">API Error: ${data.error.message} - Playlist ID check karo</p>`; return; }
+ 
+ data.items.forEach((item,i)=>{
+  const vid = item.snippet.resourceId.videoId;
+  const title = item.snippet.title;
+  const thumb = item.snippet.thumbnails.medium.url;
 
-    data.items.forEach((it,i)=>{
-      const vid = it.snippet.resourceId.videoId;
-      const title = it.snippet.title;
-      const thumb = it.snippet.thumbnails.medium.url;
-
-      const div = document.createElement('div');
-      div.className = 'drop-item' + (i===0?' active':'');
-      div.innerHTML = `<input type="radio" name="v" ${i===0?'checked':''}> <img src="${thumb}"> <span>${title}</span>`;
-      div.onclick = () => { play(vid,title,thumb,div); drop.classList.remove('show'); };
-      drop.appendChild(div);
-
-      if(i===0) play(vid,title,thumb,div);
-    });
-  }catch(e){ btn.textContent = "Load Failed"; }
+  const div = document.createElement('div');
+  div.className = 'dropdown-item' + (i===0?' active':'');
+  div.innerHTML = `<input type="radio" name="videoRadio" value="${vid}" ${i===0?'checked':''}> <img src="${thumb}"> <span>${title}</span>`;
+  div.onclick = ()=>{
+    playVideo(vid, title, thumb, div);
+    dropdown.classList.remove('show');
+  };
+  dropdown.appendChild(div);
+  if(i===0) { playVideo(vid, title, thumb, div); }
+ });
 }
 
-function play(id,title,thumb,el){
-  player.src = `https://www.youtube.com/embed/${id}?rel=0&autoplay=1&modestbranding=1`;
-  btn.innerHTML = `<input type="radio" checked> <img src="${thumb}"> <span>${title}</span>`;
-  document.querySelectorAll('.drop-item').forEach(d=>d.classList.remove('active'));
-  if(el){ el.classList.add('active'); }
+function playVideo(id, title, thumb, el){
+ player.src = `https://www.youtube.com/embed/${id}?autoplay=1&rel=0`;
+ btn.innerHTML = `<input type="radio" checked style="accent-color:red;"> <img src="${thumb}"> <span>${title}</span>`;
+ document.querySelectorAll('.dropdown-item').forEach(e=>e.classList.remove('active'));
+ if(el) { el.classList.add('active'); el.querySelector('input').checked = true; }
 }
 
-// SECURITY - VIEW SOURCE DISABLE
+// VIEW SOURCE DISABLE - AAP WALA CODE
 document.addEventListener('contextmenu', e=>e.preventDefault());
 document.addEventListener('keydown', e=>{
-  if(e.key==='F12' || (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key)) || (e.ctrlKey && ['U','u','S','s'].includes(e.key))){
-    e.preventDefault(); return false;
-  }
+ if(e.key==='F12' || (e.ctrlKey && e.shiftKey && (e.key==='I' || e.key==='J' || e.key==='C')) || (e.ctrlKey && (e.key==='U' || e.key==='u'))){
+   e.preventDefault(); return false;
+ }
 });
 document.addEventListener('selectstart', e=>e.preventDefault());
 
-load();
+loadVideos();
 </script>
 </body>
 </html>
