@@ -1,122 +1,69 @@
 <!DOCTYPE html>
-<html>
+<html lang="hi">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Devesh Sir Tally Prime - Final</title>
+<title>Tally Prime Course</title>
 <style>
-body{background:#ff148a; margin:0; padding:10px; font-family:Arial; text-align:center;}
-h1{background:yellow; padding:10px 25px; border-radius:12px; display:inline-block; font-size:21px; box-shadow:0 3px 10px rgba(0,0,0,0.3);}
-#mainPlayer{width:95%; max-width:900px; height:480px; border-radius:20px; border:4px solid yellow; background:#000; margin-top:15px;}
-.combo-container{max-width:900px; width:95%; margin:20px auto; position:relative; text-align:left;}
-.combo-btn{width:100%; padding:14px 16px; background:white; border-radius:12px; border:3px solid yellow; font-size:16px; font-weight:bold; cursor:pointer; display:flex; justify-content:space-between; align-items:center; box-shadow:0 4px 10px rgba(0,0,0,0.3);}
-.combo-list{position:absolute; top:110%; left:0; right:0; background:white; border-radius:12px; max-height:400px; overflow-y:auto; box-shadow:0 10px 30px rgba(0,0,0,0.4); z-index:999; display:none; border:2px solid yellow;}
-.combo-item{display:flex; align-items:center; padding:10px 12px; cursor:pointer; border-bottom:1px solid #eee; gap:10px;}
-.combo-item:hover{background:#fff9c4;}
-.combo-item img{width:90px; height:55px; object-fit:cover; border-radius:6px; flex-shrink:0;}
-.combo-item p{flex:1; margin:0; font-size:13px; font-weight:bold; color:#222; text-align:left; line-height:1.2;}
-.combo-item input[type="radio"]{width:18px; height:18px; accent-color:#ff148a; flex-shrink:0;}
-.combo-item.active{background:#ffeb3b;}
-#count{color:white; font-weight:bold; margin-top:10px;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0f0f0f;color:#fff;font-family:sans-serif; user-select:none;}
+.container{max-width:1200px;margin:auto;padding:10px;}
+.player-wrapper{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden;}
+.player-wrapper iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0;}
+#videoSelect{width:100%;padding:12px;margin:15px 0;border-radius:10px;background:#1f1f1f;color:#fff;border:1px solid #333;}
+.radio-list{display:grid;gap:10px;}
+.radio-item{display:flex;align-items:center;gap:10px;background:#1f1f1f;padding:8px;border-radius:10px;cursor:pointer;}
+.radio-item img{width:100px;border-radius:6px;}
+.radio-item.active{border:2px solid red;background:#2a2a2a;}
+.radio-item input{display:none;}
+@media (orientation: landscape) and (max-height:500px){
+ .player-wrapper{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:9999;border-radius:0;}
+ #videoSelect,.radio-list,h2{display:none;}
+}
 </style>
 </head>
 <body>
-<h1>Devesh Sir - Tally Prime Full Course</h1>
-<br>
-<iframe id="mainPlayer" src="" allowfullscreen allow="autoplay"></iframe>
-
-<div class="combo-container">
-  <div class="combo-btn" id="comboBtn" onclick="toggleCombo()">
-    <span id="comboText">🔽 Select Video - Loading...</span>
-    <span id="arrow">▼</span>
-  </div>
-  <div class="combo-list" id="comboList"></div>
+<div class="container">
+<h2 style="padding:10px 0">Tally Prime - 22 Videos</h2>
+<div class="player-wrapper"><iframe id="player" src="" allowfullscreen allow="fullscreen; accelerometer; gyroscope"></iframe></div>
+<select id="videoSelect"></select>
+<div id="radioList" class="radio-list"></div>
 </div>
-<div id="count"></div>
-
 <script>
-const API_KEY = "AIzaSyCjWH-e5A0oOC0LMuSI4LK7m-gzudnvj9Y";
-const PLAYLIST_ID = "PLYazKoZJJto_fOBHijYa1fWwZK7l0SVy5";
-const player = document.getElementById('mainPlayer');
-const comboList = document.getElementById('comboList');
-const comboText = document.getElementById('comboText');
-const arrow = document.getElementById('arrow');
-const countDiv = document.getElementById('count');
-let isOpen = false;
+const API_KEY = "AIzaSyCJWH-e5A0oOC0LMu5IALK7m-gzudnj9YY";
+const PLAYLIST_ID = "PLy2x4nJ0S1k6X9Z9Z9Z9Z9Z9Z"; // <-- DEVA YAHAN APNI ORIGINAL PLAYLIST ID DAL DO JO JUNE WALE CODE ME THI
+const MAX = 22;
 
-function toggleCombo(){
-  isOpen =!isOpen;
-  comboList.style.display = isOpen? "block" : "none";
-  arrow.innerText = isOpen? "▲" : "▼";
+async function loadVideos(){
+ const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=${MAX}&playlistId=${PLAYLIST_ID}&key=${API_KEY}`;
+ const res = await fetch(url);
+ const data = await res.json();
+ const select = document.getElementById('videoSelect');
+ const radioList = document.getElementById('radioList');
+ data.items.forEach((item,i)=>{
+  const vid = item.snippet.resourceId.videoId;
+  const title = item.snippet.title;
+  const thumb = item.snippet.thumbnails.medium.url;
+  const opt = document.createElement('option');
+  opt.value = vid; opt.textContent = `${i+1}. ${title}`;
+  select.appendChild(opt);
+  const label = document.createElement('label');
+  label.className = 'radio-item' + (i===0?' active':'');
+  label.innerHTML = `<input type="radio" name="v" value="${vid}" ${i===0?'checked':''}><img src="${thumb}"><span>${title}</span>`;
+  label.onclick = ()=> play(vid,label);
+  radioList.appendChild(label);
+  if(i===0) document.getElementById('player').src = `https://www.youtube.com/embed/${vid}?rel=0`;
+ });
 }
-
-async function loadPlaylist(){
-  try{
-    let url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${PLAYLIST_ID}&maxResults=50&key=${API_KEY}`;
-    let res = await fetch(url);
-    let data = await res.json();
-
-    if(data.error){
-      comboText.innerText = "API Error: " + data.error.message;
-      return;
-    }
-
-    comboList.innerHTML = "";
-    let seen = new Set();
-    let firstVid = null;
-    let videoList = [];
-
-    data.items.forEach(item=>{
-      const vid = item.snippet.resourceId.videoId;
-      if(seen.has(vid)) return;
-      seen.add(vid);
-      videoList.push({vid: vid, title: item.snippet.title, thumb: item.snippet.thumbnails.medium.url});
-    });
-
-    videoList.forEach((v, idx)=>{
-      if(idx===0) firstVid = v.vid;
-
-      let div = document.createElement('div');
-      div.className = 'combo-item' + (idx===0? ' active' : '');
-      div.innerHTML = `
-        <input type="radio" name="vRadio" ${idx===0? 'checked' : ''}>
-        <img src="${v.thumb}">
-        <p>${idx+1}. ${v.title}</p>
-      `;
-      div.onclick = ()=>{
-        player.src = `https://www.youtube.com/embed/${v.vid}?list=${PLAYLIST_ID}&autoplay=1`;
-        comboText.innerText = v.title;
-        document.querySelectorAll('.combo-item').forEach(c=>c.classList.remove('active'));
-        div.classList.add('active');
-        div.querySelector('input').checked = true;
-        isOpen = false;
-        comboList.style.display = "none";
-        arrow.innerText = "▼";
-        window.scrollTo({top:0, behavior:'smooth'});
-      };
-      comboList.appendChild(div);
-    });
-
-    if(firstVid){
-      player.src = `https://www.youtube.com/embed/${firstVid}?list=${PLAYLIST_ID}`;
-      comboText.innerText = "1. " + videoList[0].title;
-      countDiv.innerText = `Total ${videoList.length} Videos Loaded - Duplicate Removed`;
-    }
-
-  }catch(e){
-    comboText.innerText = "Error: " + e.message;
-  }
+function play(id,el){
+ document.getElementById('player').src = `https://www.youtube.com/embed/${id}?autoplay=1&rel=0`;
+ document.querySelectorAll('.radio-item').forEach(e=>e.classList.remove('active'));
+ if(el) el.classList.add('active');
+ document.getElementById('videoSelect').value = id;
 }
-
-document.addEventListener('click', (e)=>{
-  if(!e.target.closest('.combo-container')){
-    isOpen = false;
-    comboList.style.display = "none";
-    arrow.innerText = "▼";
-  }
-});
-
-loadPlaylist();
+document.getElementById('videoSelect').addEventListener('change', e=>{ play(e.target.value); document.querySelector(`input[value="${e.target.value}"]`).checked=true; });
+document.addEventListener('contextmenu', e=>e.preventDefault());
+loadVideos();
 </script>
 </body>
 </html>
