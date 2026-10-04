@@ -3,62 +3,120 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Devesh Sir Tally</title>
+<title>Devesh Sir Tally Prime - Final</title>
 <style>
-body{background:#ff1a8a; margin:0; padding:10px; font-family:Arial; text-align:center;}
-h1{background:yellow; display:inline-block; padding:10px 20px; border-radius:12px; font-size:20px;}
-#mainPlayer{width:95%; max-width:900px; height:460px; border-radius:20px; border:4px solid yellow; background:black;}
-#grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(220px,1fr)); gap:12px; max-width:900px; margin:20px auto;}
-.card{background:white; border-radius:12px; overflow:hidden; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.3);}
-.card img{width:100%; height:130px; object-fit:cover;}
-.card p{margin:8px; font-size:13px; font-weight:bold; text-align:left; height:38px; overflow:hidden;}
-.card.active{outline:4px solid yellow;}
+body{background:#ff148a; margin:0; padding:10px; font-family:Arial; text-align:center;}
+h1{background:yellow; padding:10px 25px; border-radius:12px; display:inline-block; font-size:21px; box-shadow:0 3px 10px rgba(0,0,0,0.3);}
+#mainPlayer{width:95%; max-width:900px; height:480px; border-radius:20px; border:4px solid yellow; background:#000; margin-top:15px;}
+.combo-container{max-width:900px; width:95%; margin:20px auto; position:relative; text-align:left;}
+.combo-btn{width:100%; padding:14px 16px; background:white; border-radius:12px; border:3px solid yellow; font-size:16px; font-weight:bold; cursor:pointer; display:flex; justify-content:space-between; align-items:center; box-shadow:0 4px 10px rgba(0,0,0,0.3);}
+.combo-list{position:absolute; top:110%; left:0; right:0; background:white; border-radius:12px; max-height:400px; overflow-y:auto; box-shadow:0 10px 30px rgba(0,0,0,0.4); z-index:999; display:none; border:2px solid yellow;}
+.combo-item{display:flex; align-items:center; padding:10px 12px; cursor:pointer; border-bottom:1px solid #eee; gap:10px;}
+.combo-item:hover{background:#fff9c4;}
+.combo-item img{width:90px; height:55px; object-fit:cover; border-radius:6px; flex-shrink:0;}
+.combo-item p{flex:1; margin:0; font-size:13px; font-weight:bold; color:#222; text-align:left; line-height:1.2;}
+.combo-item input[type="radio"]{width:18px; height:18px; accent-color:#ff148a; flex-shrink:0;}
+.combo-item.active{background:#ffeb3b;}
+#count{color:white; font-weight:bold; margin-top:10px;}
 </style>
 </head>
 <body>
-<h1>Devesh Sir - Tally Prime Course (22 Videos)</h1>
+<h1>Devesh Sir - Tally Prime Full Course</h1>
 <br>
-<iframe id="mainPlayer" src="https://www.youtube.com/embed?listType=playlist&list=PLYazKoZJJto_fOBHijYa1fWwZK7l0SVy5&index=0" allowfullscreen></iframe>
-<div id="grid">Loading thumbnails... 2 second ruko DEVA</div>
+<iframe id="mainPlayer" src="" allowfullscreen allow="autoplay"></iframe>
+
+<div class="combo-container">
+  <div class="combo-btn" id="comboBtn" onclick="toggleCombo()">
+    <span id="comboText">🔽 Select Video - Loading...</span>
+    <span id="arrow">▼</span>
+  </div>
+  <div class="combo-list" id="comboList"></div>
+</div>
+<div id="count"></div>
 
 <script>
+const API_KEY = "AIzaSyQWH-e5A0oOCUMuSHLk7m-gzudnj9Y";
 const PLAYLIST_ID = "PLYazKoZJJto_fOBHijYa1fWwZK7l0SVy5";
-const grid = document.getElementById('grid');
 const player = document.getElementById('mainPlayer');
+const comboList = document.getElementById('comboList');
+const comboText = document.getElementById('comboText');
+const arrow = document.getElementById('arrow');
+const countDiv = document.getElementById('count');
+let isOpen = false;
 
-// RSS wala method - ye GitHub par block nahi hota
-fetch(`https://api.rss2json.com/v1/api.json?rss_url=https://www.youtube.com/feeds/videos.xml?playlist_id=${PLAYLIST_ID}`)
-.then(r=>r.json())
-.then(data=>{
-  grid.innerHTML = "";
-  if(!data.items || data.items.length==0){
-    grid.innerHTML = "YouTube ne playlist ka RSS band kar diya hai. Neeche wala Permanent wala code use karo.";
-    return;
+function toggleCombo(){
+  isOpen =!isOpen;
+  comboList.style.display = isOpen? "block" : "none";
+  arrow.innerText = isOpen? "▲" : "▼";
+}
+
+async function loadPlaylist(){
+  try{
+    let url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${PLAYLIST_ID}&maxResults=50&key=${API_KEY}`;
+    let res = await fetch(url);
+    let data = await res.json();
+
+    if(data.error){
+      comboText.innerText = "API Error: " + data.error.message;
+      return;
+    }
+
+    comboList.innerHTML = "";
+    let seen = new Set();
+    let firstVid = null;
+    let videoList = [];
+
+    data.items.forEach(item=>{
+      const vid = item.snippet.resourceId.videoId;
+      if(seen.has(vid)) return;
+      seen.add(vid);
+      videoList.push({vid: vid, title: item.snippet.title, thumb: item.snippet.thumbnails.medium.url});
+    });
+
+    videoList.forEach((v, idx)=>{
+      if(idx===0) firstVid = v.vid;
+
+      let div = document.createElement('div');
+      div.className = 'combo-item' + (idx===0? ' active' : '');
+      div.innerHTML = `
+        <input type="radio" name="vRadio" ${idx===0? 'checked' : ''}>
+        <img src="${v.thumb}">
+        <p>${idx+1}. ${v.title}</p>
+      `;
+      div.onclick = ()=>{
+        player.src = `https://www.youtube.com/embed/${v.vid}?list=${PLAYLIST_ID}&autoplay=1`;
+        comboText.innerText = v.title;
+        document.querySelectorAll('.combo-item').forEach(c=>c.classList.remove('active'));
+        div.classList.add('active');
+        div.querySelector('input').checked = true;
+        isOpen = false;
+        comboList.style.display = "none";
+        arrow.innerText = "▼";
+        window.scrollTo({top:0, behavior:'smooth'});
+      };
+      comboList.appendChild(div);
+    });
+
+    if(firstVid){
+      player.src = `https://www.youtube.com/embed/${firstVid}?list=${PLAYLIST_ID}`;
+      comboText.innerText = "1. " + videoList[0].title;
+      countDiv.innerText = `Total ${videoList.length} Videos Loaded - Duplicate Removed`;
+    }
+
+  }catch(e){
+    comboText.innerText = "Error: " + e.message;
   }
-  let seen = new Set();
-  data.items.forEach((item, idx)=>{
-    const link = item.link; // https://www.youtube.com/watch?v=XXXX
-    const vid = link.split('v=')[1];
-    if(seen.has(vid)) return;
-    seen.add(vid);
-    const title = item.title;
-    const thumb = `https://i.ytimg.com/vi/${vid}/mqdefault.jpg`;
+}
 
-    let div = document.createElement('div');
-    div.className = 'card' + (idx==0?' active':'');
-    div.innerHTML = `<img src="${thumb}"><p>${title}</p>`;
-    div.onclick = ()=>{
-      player.src = `https://www.youtube.com/embed/${vid}?list=${PLAYLIST_ID}&autoplay=1`;
-      document.querySelectorAll('.card').forEach(c=>c.classList.remove('active'));
-      div.classList.add('active');
-      window.scrollTo({top:0, behavior:'smooth'});
-    };
-    grid.appendChild(div);
-  });
-})
-.catch(err=>{
-  grid.innerHTML = "Internet slow hai, thumbnails load nahi hue. Upar wala player chal raha hai, right side ke 3 dot se aap 22 videos dekh sakte ho.";
+document.addEventListener('click', (e)=>{
+  if(!e.target.closest('.combo-container')){
+    isOpen = false;
+    comboList.style.display = "none";
+    arrow.innerText = "▼";
+  }
 });
+
+loadPlaylist();
 </script>
 </body>
 </html>
