@@ -3,53 +3,41 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Tally Prime Course - DEVA</title>
+<title>Computer Science - DEVA</title>
 <style>
   *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
-  body{font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin:0; background:#f0f2f5; color:#1a1a1a; user-select:none; -webkit-user-select:none;}
+  body{font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin:0; background:#f0f2f5; color:#1a1a1a; user-select:none;}
+  .header{background:#0a7a0a; color:#fff; padding:10px 15px; position:sticky; top:0; z-index:20; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 10px rgba(0,0,0,0.15)}
+  .header-left{font-weight:800; font-size:18px;}
+  .header img{width:48px; height:48px; border-radius:50%; border:3px solid #ff7f27; object-fit:cover; background:#fff}
   .container{max-width:1150px; margin:auto; padding:15px; width:100%;}
-  h2{margin:10px 0 15px 5px; font-size:22px;}
-  .video-box{position:relative; padding-bottom:56.25%; height:0; background:#000; border-radius:16px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,0.2);}
+  h2{margin:10px 0 15px 5px; font-size:22px; color:#0a7a0a}
+  .video-box{position:relative; width:100%; aspect-ratio:16/9; background:#000; border-radius:16px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,0.2);}
   .video-box iframe{position:absolute; top:0; left:0; width:100%; height:100%; border:0;}
   .playlist{margin-top:20px; background:#fff; border-radius:16px; padding:12px; box-shadow:0 4px 15px rgba(0,0,0,0.05);}
   .video-item{display:flex; align-items:center; gap:12px; padding:12px; border-radius:12px; cursor:pointer; border:2px solid transparent; transition:0.2s;}
-  .video-item:hover{background:#f5f7ff;}
   .video-item.active{border-color:#4a5bff; background:#eef0ff;}
   .video-item img{width:130px; height:75px; border-radius:10px; object-fit:cover; background:#ddd; flex-shrink:0;}
-  .video-item input[type="radio"]{transform:scale(1.4); flex-shrink:0; accent-color:#4a5bff;}
+  .video-item input[type="radio"]{transform:scale(1.4); accent-color:#4a5bff;}
   .title{font-weight:600; font-size:15px; line-height:1.3;}
-  @media (max-width: 768px){
-    .container{padding:10px;}
-    h2{font-size:18px;}
-    .video-item{padding:10px; gap:10px;}
-    .video-item img{width:95px; height:58px; border-radius:8px;}
-    .title{font-size:13.5px;}
-  }
-  @media (max-width: 480px){
-    .video-box{border-radius:12px;}
-    .video-item img{width:80px; height:50px;}
-  }
-  @media (min-width: 1024px){
-    .container{max-width: 100%; padding: 20px 30px;}
-    .video-box{padding-bottom: 48%;}
-    h2{font-size: 26px;}
-  }
-  @media (orientation: landscape) and (max-width: 900px){
-    .container{padding:0; max-width:100%;}
-    h2{padding:10px 15px; font-size:16px;}
-    .video-box{border-radius:0;}
-    .playlist{margin:10px; border-radius:12px;}
-  }
+  @media (max-width:768px){ .container{padding:10px} h2{font-size:18px} .video-item img{width:95px; height:58px} .title{font-size:13.5px} }
+  @media (orientation: landscape) and (max-width: 900px){ .container{padding:0; max-width:100%} h2{padding:10px 15px} .video-box{border-radius:0} .playlist{margin:10px} }
 </style>
 </head>
 <body>
+<div class="header">
+  <div class="header-left">COMPUTER SCIENCE - DEVA</div>
+  <a href="future.html"><img src="deva_final_avatar.png" alt="DEVA"></a>
+</div>
+
 <div class="container">
-  <h2>Tally Prime Full Course</h2>
+  <h2>Discrete Mathematics Full Course (4 Videos)</h2>
   <div class="video-box">
     <iframe id="player" src="" allow="autoplay; fullscreen" allowfullscreen></iframe>
   </div>
   <div class="playlist" id="playlist"></div>
 </div>
+
 <script>
 const videos = [
 { id: "MZhMKtAHepc", title: "Chapter 1 - Artificial Intelligence (Discrete Mathematics)" },
@@ -69,9 +57,7 @@ function loadPlaylist(){
     div.onclick = () => playVideo(v.id, div);
     playlistDiv.appendChild(div);
   });
-  if(videos.length > 0){
-    player.src = `https://www.youtube.com/embed/${videos[0].id}?rel=0&modestbranding=1`;
-  }
+  if(videos.length > 0){ player.src = `https://www.youtube.com/embed/${videos[0].id}?rel=0&modestbranding=1`; }
 }
 function playVideo(id, element){
   player.src = `https://www.youtube.com/embed/${id}?rel=0&autoplay=1&modestbranding=1`;
@@ -81,17 +67,8 @@ function playVideo(id, element){
   window.scrollTo({top:0, behavior:'smooth'});
 }
 loadPlaylist();
-</script>
-<script>
 document.addEventListener('contextmenu', e => e.preventDefault());
-document.onkeydown = function(e){
-  if(e.keyCode==123) return false;
-  if(e.ctrlKey && e.keyCode==85) return false;
-  if(e.ctrlKey && e.shiftKey && e.keyCode==73) return false;
-  if(e.ctrlKey && e.shiftKey && e.keyCode==67) return false;
-  if(e.ctrlKey && e.shiftKey && e.keyCode==74) return false;
-  if(e.ctrlKey && e.keyCode==83) return false;
-};
+document.onkeydown = function(e){ if(e.keyCode==123 || (e.ctrlKey && e.keyCode==85)) return false; };
 </script>
 </body>
 </html>
