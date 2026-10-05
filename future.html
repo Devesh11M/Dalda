@@ -1,68 +1,80 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>welcome</title>
-<script>
-  document.addEventListener('contextmenu', event => event.preventDefault());
-  document.addEventListener('keydown', event => {
-    if (event.ctrlKey && (event.key === 'u' || event.key === 'U')) {
-      event.preventDefault();
-    }
-  });
-</script>
-	
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Welcome - DEVA</title>
 <style>
-a{
-text-decoration:none;
-font-weight:bolder;
-font-family: Georgia, serif;
-font-size:25px;
-color:yellow;
-bgcolor:green;
-}
+  *{box-sizing:border-box} body{margin:0; font-family:sans-serif; background:#f0f2f5; user-select:none}
+  .header{background:#0a7a0a; color:#fff; padding:12px 15px; position:sticky; top:0; z-index:10; display:flex; align-items:center; justify-content:space-between}
+  .header marquee{font-weight:800; font-size:20px; flex:1}
+  .profile{width:58px; height:58px; border-radius:50%; border:3px solid #ff7f27; object-fit:cover; background:#fff; margin-left:10px; flex-shrink:0}
+  .container{max-width:900px; margin:auto; padding:15px}
+  .welcome-box{background:#fff; border-radius:16px; padding:20px; display:flex; gap:15px; align-items:center; margin:15px 0; box-shadow:0 4px 15px rgba(0,0,0,0.06)}
+  .welcome-box img{width:90px; height:90px; border-radius:50%; border:4px solid #ff7f27; object-fit:cover}
+  .welcome-box h2{margin:0; color:#0a7a0a} .welcome-box p{margin:5px 0 0; color:#555}
+  .card{background:#fff; border-radius:16px; padding:16px; margin-bottom:16px; box-shadow:0 4px 15px rgba(0,0,0,0.06)}
+  .card h3{margin:0 0 12px; font-size:18px; color:#0a7a0a; border-left:4px solid #0a7a0a; padding-left:10px}
+  .link-list{display:flex; flex-direction:column; gap:10px}
+  .link-list a{display:block; text-decoration:none; font-weight:600; font-size:15px; background:#f6fbf6; border:1.5px solid #c8e6c9; color:#1b5e20; padding:12px 14px; border-radius:10px}
+  .video-links a{background:#eef0ff; border-color:#c5cae9; color:#1a237e}
+  .singing a{background:linear-gradient(135deg, #ff1744, #d50000); color:#fff; border:0; text-align:center; font-size:18px; padding:16px}
+  @media(min-width:1024px){.container{max-width:1000px} .profile{width:70px; height:70px} .welcome-box img{width:110px; height:110px}}
 </style>
+<script>
+  document.addEventListener('contextmenu', e => e.preventDefault());
+  document.addEventListener('keydown', e => { if(e.ctrlKey && e.key.toLowerCase() === 'u') e.preventDefault(); });
+</script>
 </head>
-<body bgcolor="green" >
-	<marquee direction="left" bgcolor="yellow" scrollamount=40><font size=12 color="green"><b>ACCOUNTS</b></font></marquee>
-	<center><font color="yellow" size=5>Accounts</font></center>
-	<a href="https://drive.google.com/file/d/1pOl-vg6Qzi-BKsJqEyucs6JWBCVAMtQU/view?usp=drive_link"  >ACCOUNTING AND ITS FUNCTIONS</a><br><br>
-	<a href="https://drive.google.com/file/d/1JWOvfuA7FwUTUEZLJJtISWxkU9UWLlZ7/view?usp=drive_link"  >ACCOUNTING CONCEPTS AND STANDARDS</a><br><br>
-	<a href="https://drive.google.com/file/d/1tSiLJURq6jGRvfsrHbv0I7Fwy0c94IBR/view?usp=drive_link"  >BASIC ACCOUNTING PROCESS: PREPARATION OF JOURNAL, LEDGER AND TRIAL BALANCE</a><br><br>
-	<a href="https://drive.google.com/file/d/1UIMhiAWBmp2760abn9pryS4R8jI_f4D1/view?usp=drive_link"  > 	PREPARATION AND ANALYSIS OF FINAL ACCOUNTS</a><br><br>
-	<a href="https://drive.google.com/file/d/1KvNzrV9aRVPiEE5jRKuRtedme6rgrwcy/view?usp=drive_link"  > 	CONSTRUCTION AND ANALYSIS OF FUND FLOW AND CASH FLOW STATEMENTS</a><br><br>
-	<a href="https://drive.google.com/file/d/1yXMQH8n4ZyU1pKwLzbdL6PYsR3T7q2yH/view?usp=drive_link" > 	RATIO ANALYSIS</a><br><br>
-	<a href="https://drive.google.com/file/d/1NqdkFy3Frn7I6RJkPbpQNhegQmwYMBX9/view?usp=drive_link" > 	INTRODUCTION TO FINANCIAL MANAGEMENT</a><br><br>
-	<a href="https://drive.google.com/file/d/1Fp_yZO39uXwdlfi75szGgvdJZb6eY8MT/view?usp=drive_link" > 	TIME VALUE OF MONEY</a><br><br>
-	<a href="https://drive.google.com/file/d/18Genc8SCD8Ykl_hUyYyMcUffzUlzUqBl/view?usp=drive_link" > 	INVESTMENT APPRAISAL METHODS</a><br><br>
-	<a href="https://drive.google.com/file/d/1t0UgCm_JQUZx_si1aAKyaK2ptRhFxgGH/view?usp=drive_link" > 	WORKING CAPITAL DECISIONS</a><br><br>
-	<a href="https://drive.google.com/file/d/1ce6t4iMAoTpKiG46xbX7XfTFsPRKbBol/view?usp=drive_link" > 	CASH AND TREASURY MANAGEMENT</a><br><br>
-	<a href="https://drive.google.com/file/d/1rJLyjymXvK4fQlxZxgY5XLc4qKaTrgno/view?usp=drive_link" > 	RECEIVABLES MANAGEMENT</a><br><br>
-	<a href="https://drive.google.com/file/d/1sMYU1UchtTI8wD3ak28Qw9Gf1liys-99/view?usp=drive_link" >INVENTORY MANAGEMENT</a><br><br>
-	<a href="Organizational Overview.pdf">ORGANISATIONAL OVERVIEW</a><br><br><br>
-	<a href="Portfolio managent and IT Applications.pdf">PORTFOLIO MANAGEMENT AND IT APPLICATIONS</a><br><br><br>
-	<a href="job costing.pdf">JOB COSTING</a><br><br>
-	<a href="uu.html">LEARNING VIDEOS OF TALLY PRIME PRACTICAL</a><br>
-	<a href="uuu.html">LEARNING VIDEOS OF COMPUTER SCIENCECAL</a><<br>
-	<a href="My singing.html"><Font Color="red"><H1> <b> NY SINGING SONG< /b></H1></Font></a>
+<body>
+  <div class="header">
+    <marquee scrollamount="10">ACCOUNTS - DEVA</marquee>
+    <img src="deva_final_avatar.png" class="profile" alt="DEVA">
+  </div>
 
-		
+  <div class="container">
+    <div class="welcome-box">
+      <img src="deva_final_avatar.png" alt="DEVA">
+      <div>
+        <h2>Welcome DEVA</h2>
+        <p>Accounts & Learning Portal</p>
+      </div>
+    </div>
+
+    <div class="card"><h3>Accounting Notes</h3>
+      <div class="link-list">
+        <a href="https://drive.google.com/file/d/1pOl-vg6Qzi-BKsJqEyucs6JWBCVAMtQU/view?usp=drive_link">ACCOUNTING AND ITS FUNCTIONS</a>
+        <a href="https://drive.google.com/file/d/1JWOvfuA7FwUTUEZLJJtISWxkU9UWLlZ7/view?usp=drive_link">ACCOUNTING CONCEPTS AND STANDARDS</a>
+        <a href="https://drive.google.com/file/d/1tSiLJURq6jGRvfsrHbv0I7Fwy0c94IBR/view?usp=drive_link">BASIC ACCOUNTING PROCESS: JOURNAL, LEDGER AND TRIAL BALANCE</a>
+        <a href="https://drive.google.com/file/d/1UIMhiAWBmp2760abn9pryS4R8jI_f4D1/view?usp=drive_link">PREPARATION AND ANALYSIS OF FINAL ACCOUNTS</a>
+        <a href="https://drive.google.com/file/d/1KvNzrV9aRVPiEE5jRKuRtedme6rgrwcy/view?usp=drive_link">FUND FLOW AND CASH FLOW STATEMENTS</a>
+        <a href="https://drive.google.com/file/d/1yXMQH8n4ZyU1pKwLzbdL6PYsR3T7q2yH/view?usp=drive_link">RATIO ANALYSIS</a>
+      </div>
+    </div>
+
+    <div class="card"><h3>Financial Management</h3>
+      <div class="link-list">
+        <a href="https://drive.google.com/file/d/1NqdkFy3Frn7I6RJkPbpQNhegQmwYMBX9/view?usp=drive_link">INTRODUCTION TO FINANCIAL MANAGEMENT</a>
+        <a href="https://drive.google.com/file/d/1Fp_yZO39uXwdlfi75szGgvdJZb6eY8MT/view?usp=drive_link">TIME VALUE OF MONEY</a>
+        <a href="https://drive.google.com/file/d/18Genc8SCD8Ykl_hUyYyMcUffzUlzUqBl/view?usp=drive_link">INVESTMENT APPRAISAL METHODS</a>
+        <a href="https://drive.google.com/file/d/1t0UgCm_JQUZx_si1aAKyaK2ptRhFxgGH/view?usp=drive_link">WORKING CAPITAL DECISIONS</a>
+        <a href="https://drive.google.com/file/d/1ce6t4iMAoTpKiG46xbX7XfTFsPRKbBol/view?usp=drive_link">CASH AND TREASURY MANAGEMENT</a>
+        <a href="https://drive.google.com/file/d/1rJLyjymXvK4fQlxZxgY5XLc4qKaTrgno/view?usp=drive_link">RECEIVABLES MANAGEMENT</a>
+        <a href="https://drive.google.com/file/d/1sMYU1UchtTI8wD3ak28Qw9Gf1liys-99/view?usp=drive_link">INVENTORY MANAGEMENT</a>
+        <a href="Organizational Overview.pdf">ORGANISATIONAL OVERVIEW</a>
+        <a href="Portfolio managent and IT Applications.pdf">PORTFOLIO MANAGEMENT AND IT APPLICATIONS</a>
+        <a href="job costing.pdf">JOB COSTING</a>
+      </div>
+    </div>
+
+    <div class="card"><h3>Learning Videos</h3>
+      <div class="link-list video-links">
+        <a href="uu.html">LEARNING VIDEOS OF TALLY PRIME PRACTICAL</a>
+        <a href="uuu.html">LEARNING VIDEOS OF COMPUTER SCIENCE</a>
+      </div>
+    </div>
+
+    <div class="card"><div class="link-list singing"><a href="My singing.html">MY SINGING SONGS 🎤</a></div></div>
+  </div>
 </body>
-
-
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
