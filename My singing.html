@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Hobby Singing - DEVA</title>
+<style>
+  *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+  body{font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin:0; background:#f0f2f5; color:#1a1a1a; user-select:none; -webkit-user-select:none;}
+  .container{max-width:1150px; margin:auto; padding:15px; width:100%;}
+  h2{margin:10px 0 15px 5px; font-size:22px;}
+  .video-box{position:relative; padding-bottom:56.25%; height:0; background:#000; border-radius:16px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,0.2);}
+  .video-box iframe{position:absolute; top:0; left:0; width:100%; height:100%; border:0;}
+  .playlist{margin-top:20px; background:#fff; border-radius:16px; padding:12px; box-shadow:0 4px 15px rgba(0,0,0,0.05); min-height:100px;}
+  .video-item{display:flex; align-items:center; gap:12px; padding:12px; border-radius:12px; cursor:pointer; border:2px solid transparent; transition:0.2s;}
+  .video-item:hover{background:#f5f7ff;}
+  .video-item.active{border-color:#4a5bff; background:#eef0ff;}
+  .video-item img{width:130px; height:75px; border-radius:10px; object-fit:cover; background:#ddd; flex-shrink:0;}
+  .video-item input[type="radio"]{transform:scale(1.4); flex-shrink:0; accent-color:#4a5bff;}
+  .title{font-weight:600; font-size:15px; line-height:1.3;}
+  .loading{padding:20px; text-align:center; color:#666;}
+  @media (max-width: 768px){
+    .container{padding:10px;}
+    h2{font-size:18px;}
+    .video-item{padding:10px; gap:10px;}
+    .video-item img{width:95px; height:58px; border-radius:8px;}
+    .title{font-size:13.5px;}
+  }
+  @media (max-width: 480px){
+    .video-box{border-radius:12px;}
+    .video-item img{width:80px; height:50px;}
+  }
+  @media (min-width: 1024px){
+    .container{max-width: 100%; padding: 20px 30px;}
+    .video-box{padding-bottom: 48%;}
+    h2{font-size: 26px;}
+  }
+  @media (orientation: landscape) and (max-width: 900px){
+    .container{padding:0; max-width:100%;}
+    h2{padding:10px 15px; font-size:16px;}
+    .video-box{border-radius:0;}
+    .playlist{margin:10px; border-radius:12px;}
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>Hobby Singing Full Course</h2>
+  <div class="video-box">
+    <iframe id="player" src="" allow="autoplay; fullscreen" allowfullscreen></iframe>
+  </div>
+  <div class="playlist" id="playlist"><div class="loading">Loading songs...</div></div>
+</div>
+
+<script>
+// =================== YAHAN APNA API DALO ===================
+const API_KEY = "AIzaSyCjWH-e5A0oOC0LMuSI4LK7m-gzudnvj9Y"; 
+const PLAYLIST_ID = "PLTmzECecveUc"; 
+// Example: Playlist link https://www.youtube.com/playlist?list=PLxxxxxxxxxx
+// Toh PLxxxxxxxxxx wala part PLAYLIST_ID hai
+// ============================================================
+
+const playlistDiv = document.getElementById('playlist');
+const player = document.getElementById('player');
+
+async function loadFromAPI(){
+  try{
+    // 50 Videos ek baar me layega
+    const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${PLAYLIST_ID}&key=${API_KEY}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    
+    if(!data.items){
+      playlistDiv.innerHTML = "API Key / Playlist ID galat hai. Check karo DEVA.";
+      return;
+    }
+
+    playlistDiv.innerHTML = "";
+    data.items.forEach((item, index)=>{
+      const videoId = item.snippet.resourceId.videoId;
+      const title = item.snippet.title;
+      const thumb = item.snippet.thumbnails.medium.url;
+
+      const div = document.createElement('div');
+      div.className = 'video-item' + (index===0 ? ' active' : '');
+      div.innerHTML = `
+        <input type="radio" name="video" ${index===0 ? 'checked' : ''}>
+        <img src="${thumb}" alt="">
+        <div class="title">${title}</div>
+      `;
+      div.onclick = () => playVideo(videoId, div);
+      playlistDiv.appendChild(div);
+
+      // Pehla video auto load
+      if(index===0){
+        player.src = `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`;
+      }
+    });
+
+  }catch(e){
+    playlistDiv.innerHTML = "Error: " + e.message;
+  }
+}
+
+function playVideo(id, element){
+  player.src = `https://www.youtube.com/embed/${id}?rel=0&autoplay=1&modestbranding=1`;
+  document.querySelectorAll('.video-item').forEach(el=>el.classList.remove('active'));
+  element.classList.add('active');
+  element.querySelector('input[type="radio"]').checked = true;
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// Start
+loadFromAPI();
+</script>
+
+<script>
+// ===== View Source / Inspect Disable - DEVA Protection =====
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.onkeydown = function(e){
+  if(e.keyCode==123) return false;
+  if(e.ctrlKey && e.keyCode==85) return false;
+  if(e.ctrlKey && e.shiftKey && e.keyCode==73) return false;
+  if(e.ctrlKey && e.shiftKey && e.keyCode==67) return false;
+  if(e.ctrlKey && e.shiftKey && e.keyCode==74) return false;
+  if(e.ctrlKey && e.keyCode==83) return false;
+};
+</script>
+</body>
+</html>
