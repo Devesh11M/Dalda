@@ -197,7 +197,7 @@ padding-right: 0px;
     top: 0;
     width: 100%; 
     height: 100%; 
-    background-color: rgba(0,0,0,0.5); 
+    background-color: rgba(0,0,0,0.85); 
 }
 .modal-content {
     background-color: #fff;
@@ -209,14 +209,6 @@ padding-right: 0px;
     position: relative;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
-.close-btn {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-}
-.close-btn:hover { color: #000; }
 .modal-content input {
     width: 100%;
     padding: 10px;
@@ -238,6 +230,22 @@ padding-right: 0px;
 }
 .modal-content button.submit-btn:hover { background: #45a049; }
 .msg { margin-top: 10px; font-weight: bold; text-align: center; }
+
+/* Logout Button Styling */
+#logout-btn {
+    display: none;
+    background: #d9534f;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 13px;
+    margin-left: 10px;
+    cursor: pointer;
+    border: none;
+}
+#logout-btn:hover {
+    background: #c9302c;
+}
 </style>
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	
@@ -260,7 +268,6 @@ $(document).ready(function(){
         border-radius: 25px;
     }
 
-    /* Media query for small screens (mobile) */
     @media (max-width: 600px) {
         video{
             width: 90vw;  
@@ -268,7 +275,6 @@ $(document).ready(function(){
        }
     }
 
-    /* Media query for large screens */
     @media (min-width: 1200px) {
         video{
             width: 40vw;
@@ -282,23 +288,27 @@ $(document).ready(function(){
 <body>
 	<nav>
 		<ul class="menu">
-		<li class="logo"><a href="#">&#128073 My Home</a></li>
+		<li class="logo">
+            <a href="#">&#128073 My Home</a>
+            <!-- यहाँ माय होम के पास लॉगआउट बटन जोड़ दिया गया है -->
+            <button id="logout-btn" onclick="handleLogout()">🚪 Logout</button>
+        </li>
 		<li class="item"><a href="future.html">&#128073 Lession</a></li>
 		<li class="item"><a href="https://drive.google.com/file/d/1hKc7XWG7sAtz32_YQt7hlPg_E5JcPhut/view">&#128073 Assignment</a></li>
 		<li class="item"><a href="https://mega.nz/file/U4pimBzb#p2Rsf48qfd2vMWb1PgV5c5uPSXKU0rl8DhWg6mgbrp0">&#128073Syllabus</a></li>
 		<li class="item"><a href="https://drive.google.com/file/d/1CeJ3CgSYkm22G4dDUndGiIBgKHgvZ-rU/view?usp=drive_link">&#128073 Company</a></li>
 		<li class="item"><a href="https://pub-ac397c96ae2647d4a45221e91f4ce5dd.r2.dev/nt3Au1VjKd.html">&#128073 Contact Us</a></li>
-		<li class="item button"><a href="javascript:void(0);" onclick="openModal('login')">Login</a></li>
-		<li class="item button secondary"><a href="javascript:void(0);" onclick="openModal('signup')">Sign Up</a></li>
+		<li class="item button" id="nav-login-btn"><a href="javascript:void(0);" onclick="openModal('login')">Login</a></li>
+		<li class="item button secondary" id="nav-signup-btn"><a href="javascript:void(0);" onclick="openModal('signup')">Sign Up</a></li>
 		<li class="toggle"><span class="bars"></span></li>
 		</ul>
 	</nav>
 
-<!-- Login / Sign Up Modal Box -->
+<!-- Login / Sign Up Modal Box (Forceful Protection) -->
 <div id="authModal" class="modal">
     <div class="modal-content">
-        <span class="close-btn" onclick="closeModal()">&times;</span>
-        <h2 id="modal-title" style="margin-bottom: 15px; color: #333; text-align: center;">लॉगिन करें</h2>
+        <h2 id="modal-title" style="margin-bottom: 15px; color: #333; text-align: center;">साइन-इन (लॉगिन) करें</h2>
+        <p style="text-align: center; font-size: 13px; color: #666; margin-bottom: 10px;">वेबसाइट देखने के लिए कृपया लॉगिन या साइन-अप करें।</p>
         
         <input type="text" id="username" placeholder="पूरा नाम (Username)">
         <input type="email" id="email" placeholder="ईमेल आईडी">
@@ -306,6 +316,10 @@ $(document).ready(function(){
         
         <button class="submit-btn" onclick="handleSubmit()">सबमिट करें</button>
         <p class="msg" id="response-msg"></p>
+        
+        <div style="text-align: center; margin-top: 15px; font-size: 14px;">
+            <a href="javascript:void(0);" id="switch-mode-link" onclick="toggleAuthMode()" style="color: #0066cc;">नया अकाउंट बनाएं (Sign Up)</a>
+        </div>
     </div>
 </div>
 
@@ -316,31 +330,42 @@ $(document).ready(function(){
   <video id="videoPlayer" width="640" height="360" controls autoplay loop muted></video>
   
   <script>
-    // 👇 यहाँ नीचे कोट्स के अंदर अपना वाला Google Apps Web App URL पेस्ट करें
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzC3sd3TQjZ4LFm_SRSmFAQnXK6NFxoBS3kHxQe1DlJ1DV3B-hG-0-kxSfFipNRDPTRXg/exec"; 
+    // 👇 यहाँ अपना वाला Google Apps Web App URL पेस्ट करें
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzC3sd3TQjZ4LFm_SRSmFAQnXK6NFxoBS3kHxQe1DlJ1DV3B-hG-0-kxSfFipNRDPTRXg/exec
+"; 
 
     let isLoginMode = true;
 
+    // पेज खुलते ही चेक करें कि यूजर पहले से लॉगिन है या नहीं
+    window.onload = function() {
+        const loggedUser = localStorage.getItem("loggedInUser");
+        if (!loggedUser) {
+            // यदि लॉगिन नहीं है, तो जबरन लॉगिन फॉर्म दिखाएं और बंद न होने दें
+            document.getElementById('authModal').style.display = "block";
+        } else {
+            // यदि लॉगिन है, तो लॉगआउट बटन दिखाएं और लॉगिन/साइनअप छुपा दें
+            document.getElementById('logout-btn').style.display = "inline-block";
+            document.getElementById('nav-login-btn').style.display = "none";
+            document.getElementById('nav-signup-btn').style.display = "none";
+        }
+    }
+
     function openModal(mode) {
         isLoginMode = (mode === 'login');
-        document.getElementById('modal-title').innerText = isLoginMode ? "साइन-इन (लॉगिन)" : "नया अकाउंट साइन-अप करें";
-        document.getElementById('username').style.display = isLoginMode ? "none" : "block";
-        document.getElementById('response-msg').innerText = "";
-        document.getElementById('email').value = "";
-        document.getElementById('password').value = "";
-        document.getElementById('username').value = "";
+        updateModalUI();
         document.getElementById('authModal').style.display = "block";
     }
 
-    function closeModal() {
-        document.getElementById('authModal').style.display = "none";
+    function toggleAuthMode() {
+        isLoginMode = !isLoginMode;
+        updateModalUI();
     }
 
-    window.onclick = function(event) {
-        let modal = document.getElementById('authModal');
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
+    function updateModalUI() {
+        document.getElementById('modal-title').innerText = isLoginMode ? "साइन-इन (लॉगिन) करें" : "नया अकाउंट साइन-अप करें";
+        document.getElementById('username').style.display = isLoginMode ? "none" : "block";
+        document.getElementById('switch-mode-link').innerText = isLoginMode ? "नया अकाउंट बनाएं (Sign Up)" : "पहले से अकाउंट है? Login करें";
+        document.getElementById('response-msg').innerText = "";
     }
 
     async function handleSubmit() {
@@ -375,16 +400,30 @@ $(document).ready(function(){
             msgElem.style.color = result.success ? "green" : "red";
             msgElem.innerText = result.message;
 
-            if (result.success && isLoginMode) {
+            if (result.success) {
+                // यूजर का नाम ब्राउज़र में सेव कर लें ताकि बार-बार लॉगिन न करना पड़े
+                localStorage.setItem("loggedInUser", result.username || email);
+                
                 setTimeout(() => {
-                    alert("स्वागत है, " + result.username + "!");
-                    closeModal();
-                }, 500);
+                    alert("स्वागत है!");
+                    document.getElementById('authModal').style.display = "none";
+                    document.getElementById('logout-btn').style.display = "inline-block";
+                    document.getElementById('nav-login-btn').style.display = "none";
+                    document.getElementById('nav-signup-btn').style.display = "none";
+                    window.location.reload();
+                }, 600);
             }
         } catch (error) {
             msgElem.style.color = "red";
             msgElem.innerText = "सर्वर से कनेक्ट करने में त्रुटि हुई!";
         }
+    }
+
+    // लॉगआउट फंक्शन
+    function handleLogout() {
+        localStorage.removeItem("loggedInUser");
+        alert("आप सफलतापूर्वक लॉग आउट हो गए हैं।");
+        window.location.reload();
     }
   </script>
 
@@ -399,7 +438,6 @@ $(document).ready(function(){
     const videoPlayer = document.getElementById("videoPlayer");
     let currentVideoIndex = 0;
 
-    // Function to load the next video
     function playNextVideo() {
       if (currentVideoIndex < videoSources.length) {
         videoPlayer.src = videoSources[currentVideoIndex];
