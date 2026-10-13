@@ -390,7 +390,6 @@ $(document).ready(function(){
                 localStorage.setItem("loggedInUser", result.username || email);
                 
                 setTimeout(() => {
-                    alert("सफलतापूर्वक लॉगिन हो गया!");
                     document.getElementById('authModal').style.display = "none";
                     document.getElementById('logout-btn').style.display = "inline-block";
                     document.getElementById('nav-login-btn').style.display = "none";
