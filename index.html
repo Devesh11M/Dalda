@@ -14,7 +14,6 @@
   });
 </script>
 	<script>
-        // Function to generate a random hex color
         function getRandomColor() {
             const letters = '0123456789ABCDEF';
             let color = '#';
@@ -24,7 +23,6 @@
             return color;
         }
 
-        // Change background color every second
         setInterval(() => {
             document.body.style.backgroundColor = getRandomColor();
         }, 3500);
@@ -188,25 +186,25 @@ padding-right: 0px;
 }
 }
 
-/* Modal Popup Styling */
+/* Modal Popup Styling - Always on top */
 .modal {
-    display: none; 
+    display: flex; 
     position: fixed; 
-    z-index: 100000; 
+    z-index: 999999; 
     left: 0;
     top: 0;
     width: 100%; 
     height: 100%; 
     background-color: rgba(0,0,0,0.85); 
+    justify-content: center;
+    align-items: center;
 }
 .modal-content {
     background-color: #fff;
-    margin: 10% auto;
     padding: 30px;
     border-radius: 8px;
     width: 90%;
     max-width: 400px;
-    position: relative;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
 .modal-content input {
@@ -231,7 +229,6 @@ padding-right: 0px;
 .modal-content button.submit-btn:hover { background: #45a049; }
 .msg { margin-top: 10px; font-weight: bold; text-align: center; }
 
-/* Logout Button Styling */
 #logout-btn {
     display: none;
     background: #d9534f;
@@ -243,9 +240,7 @@ padding-right: 0px;
     cursor: pointer;
     border: none;
 }
-#logout-btn:hover {
-    background: #c9302c;
-}
+#logout-btn:hover { background: #c9302c; }
 </style>
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	
@@ -263,24 +258,17 @@ $(document).ready(function(){
         top: 70%;
         left: 50%;
         transform: translate(-50%, -50%);
-        z-index: 9999;
+        z-index: 999;
 	border: 3px solid white;
         border-radius: 25px;
     }
 
     @media (max-width: 600px) {
-        video{
-            width: 90vw;  
-            height: 40vh; 
-       }
+        video{ width: 90vw; height: 40vh; }
     }
 
     @media (min-width: 1200px) {
-        video{
-            width: 40vw;
-            height: 60vh;
-            background-color: seagreen;
-        }
+        video{ width: 40vw; height: 60vh; background-color: seagreen; }
     }
 </style>
 
@@ -290,7 +278,6 @@ $(document).ready(function(){
 		<ul class="menu">
 		<li class="logo">
             <a href="#">&#128073 My Home</a>
-            <!-- यहाँ माय होम के पास लॉगआउट बटन जोड़ दिया गया है -->
             <button id="logout-btn" onclick="handleLogout()">🚪 Logout</button>
         </li>
 		<li class="item"><a href="future.html">&#128073 Lession</a></li>
@@ -304,13 +291,13 @@ $(document).ready(function(){
 		</ul>
 	</nav>
 
-<!-- Login / Sign Up Modal Box (Forceful Protection) -->
-<div id="authModal" class="modal">
+<!-- Login / Sign Up Modal Box -->
+<div id="authModal" class="modal" style="display: flex;">
     <div class="modal-content">
         <h2 id="modal-title" style="margin-bottom: 15px; color: #333; text-align: center;">साइन-इन (लॉगिन) करें</h2>
         <p style="text-align: center; font-size: 13px; color: #666; margin-bottom: 10px;">वेबसाइट देखने के लिए कृपया लॉगिन या साइन-अप करें।</p>
         
-        <input type="text" id="username" placeholder="पूरा नाम (Username)">
+        <input type="text" id="username" placeholder="पूरा नाम (Username)" style="display: none;">
         <input type="email" id="email" placeholder="ईमेल आईडी">
         <input type="password" id="password" placeholder="पासवर्ड">
         
@@ -330,30 +317,29 @@ $(document).ready(function(){
   <video id="videoPlayer" width="640" height="360" controls autoplay loop muted></video>
   
   <script>
-    // 👇 यहाँ अपना वाला Google Apps Web App URL पेस्ट करें
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzC3sd3TQjZ4LFm_SRSmFAQnXK6NFxoBS3kHxQe1DlJ1DV3B-hG-0-kxSfFipNRDPTRXg/exec
-"; 
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzC3sd3TQjZ4LFm_SRSmFAQnXK6NFxoBS3kHxQe1DIJ1DV3B-hG-0-kxSfIpNRDPTRXg"; 
 
     let isLoginMode = true;
 
-    // पेज खुलते ही चेक करें कि यूजर पहले से लॉगिन है या नहीं
+    // पेज लोड होते ही चेक करें
     window.onload = function() {
         const loggedUser = localStorage.getItem("loggedInUser");
-        if (!loggedUser) {
-            // यदि लॉगिन नहीं है, तो जबरन लॉगिन फॉर्म दिखाएं और बंद न होने दें
-            document.getElementById('authModal').style.display = "block";
-        } else {
-            // यदि लॉगिन है, तो लॉगआउट बटन दिखाएं और लॉगिन/साइनअप छुपा दें
+        if (loggedUser) {
+            // अगर पहले से लॉगिन है तो पॉप-अप हटा दें और लॉगआउट बटन दिखाएं
+            document.getElementById('authModal').style.display = "none";
             document.getElementById('logout-btn').style.display = "inline-block";
             document.getElementById('nav-login-btn').style.display = "none";
             document.getElementById('nav-signup-btn').style.display = "none";
+        } else {
+            // अगर लॉगिन नहीं है तो हर हाल में पॉप-अप खुला रहेगा
+            document.getElementById('authModal').style.display = "flex";
         }
     }
 
     function openModal(mode) {
         isLoginMode = (mode === 'login');
         updateModalUI();
-        document.getElementById('authModal').style.display = "block";
+        document.getElementById('authModal').style.display = "flex";
     }
 
     function toggleAuthMode() {
@@ -401,11 +387,10 @@ $(document).ready(function(){
             msgElem.innerText = result.message;
 
             if (result.success) {
-                // यूजर का नाम ब्राउज़र में सेव कर लें ताकि बार-बार लॉगिन न करना पड़े
                 localStorage.setItem("loggedInUser", result.username || email);
                 
                 setTimeout(() => {
-                    alert("स्वागत है!");
+                    alert("सफलतापूर्वक लॉगिन हो गया!");
                     document.getElementById('authModal').style.display = "none";
                     document.getElementById('logout-btn').style.display = "inline-block";
                     document.getElementById('nav-login-btn').style.display = "none";
@@ -419,7 +404,6 @@ $(document).ready(function(){
         }
     }
 
-    // लॉगआउट फंक्शन
     function handleLogout() {
         localStorage.removeItem("loggedInUser");
         alert("आप सफलतापूर्वक लॉग आउट हो गए हैं।");
@@ -428,13 +412,7 @@ $(document).ready(function(){
   </script>
 
   <script>
-    // Array of video sources
-    const videoSources = [
-      "video1.mp4",
-      "video2.mp4",
-      "video3.mp4"
-    ];
-
+    const videoSources = ["video1.mp4", "video2.mp4", "video3.mp4"];
     const videoPlayer = document.getElementById("videoPlayer");
     let currentVideoIndex = 0;
 
