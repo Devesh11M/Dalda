@@ -14,7 +14,6 @@
   });
 </script>
 	<script>
-        // Function to generate a random hex color
         function getRandomColor() {
             const letters = '0123456789ABCDEF';
             let color = '#';
@@ -24,7 +23,6 @@
             return color;
         }
 
-        // Change background color every second
         setInterval(() => {
             document.body.style.backgroundColor = getRandomColor();
         }, 3500);
@@ -139,9 +137,10 @@ top:-5px;
 	.button a{
 		text-decoration: none;
 		padding: 7px 15px;
-		background: :teal;
+		background: teal;
 		border: 1px solid #006d6d;
 		border-radius: 50em;
+		cursor: pointer;
 	}
 	.button.secondary a{
 		background: transparent;
@@ -186,6 +185,62 @@ padding:15px 10px;
 padding-right: 0px;
 }
 }
+
+/* Modal Popup Styling - Always on top */
+.modal {
+    display: flex; 
+    position: fixed; 
+    z-index: 999999; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    background-color: rgba(0,0,0,0.85); 
+    justify-content: center;
+    align-items: center;
+}
+.modal-content {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+.modal-content input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+.modal-content button.submit-btn {
+    background: #4CAF50;
+    color: white;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+}
+.modal-content button.submit-btn:hover { background: #45a049; }
+.msg { margin-top: 10px; font-weight: bold; text-align: center; }
+
+#logout-btn {
+    display: none;
+    background: #d9534f;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 13px;
+    margin-left: 10px;
+    cursor: pointer;
+    border: none;
+}
+#logout-btn:hover { background: #c9302c; }
 </style>
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	
@@ -203,27 +258,17 @@ $(document).ready(function(){
         top: 70%;
         left: 50%;
         transform: translate(-50%, -50%);
-        z-index: 9999;
+        z-index: 999;
 	border: 3px solid white;
         border-radius: 25px;
     }
 
-
-    /* Media query for small screens (mobile) */
     @media (max-width: 600px) {
-        video{
-            width: 90vw;  /* 90% of viewport width */
-            height: 40vh; /* 40% of viewport height */
-       }
+        video{ width: 90vw; height: 40vh; }
     }
 
-    /* Media query for large screens */
     @media (min-width: 1200px) {
-        video{
-            width: 40vw;
-            height: 60vh;
-            background-color: seagreen;
-        }
+        video{ width: 40vw; height: 60vh; background-color: seagreen; }
     }
 </style>
 
@@ -231,66 +276,158 @@ $(document).ready(function(){
 <body>
 	<nav>
 		<ul class="menu">
-		<li class="logo"><a href="#">&#128073 My Home</a></li>
+		<li class="logo">
+            <a href="#">&#128073 My Home</a>
+            <button id="logout-btn" onclick="handleLogout()">🚪 Logout</button>
+        </li>
 		<li class="item"><a href="future.html">&#128073 Lession</a></li>
 		<li class="item"><a href="https://drive.google.com/file/d/1hKc7XWG7sAtz32_YQt7hlPg_E5JcPhut/view">&#128073 Assignment</a></li>
 		<li class="item"><a href="https://mega.nz/file/U4pimBzb#p2Rsf48qfd2vMWb1PgV5c5uPSXKU0rl8DhWg6mgbrp0">&#128073Syllabus</a></li>
 		<li class="item"><a href="https://drive.google.com/file/d/1CeJ3CgSYkm22G4dDUndGiIBgKHgvZ-rU/view?usp=drive_link">&#128073 Company</a></li>
 		<li class="item"><a href="https://pub-ac397c96ae2647d4a45221e91f4ce5dd.r2.dev/nt3Au1VjKd.html">&#128073 Contact Us</a></li>
-		<li class="item button"><a href="#">Login</a></li>
-		<li class="item button secondary"><a href="#">Sign Up</a></li>
+		<li class="item button" id="nav-login-btn"><a href="javascript:void(0);" onclick="openModal('login')">Login</a></li>
+		<li class="item button secondary" id="nav-signup-btn"><a href="javascript:void(0);" onclick="openModal('signup')">Sign Up</a></li>
 		<li class="toggle"><span class="bars"></span></li>
 		</ul>
-
 	</nav>
+
+<!-- Login / Sign Up Modal Box -->
+<div id="authModal" class="modal" style="display: flex;">
+    <div class="modal-content">
+        <h2 id="modal-title" style="margin-bottom: 15px; color: #333; text-align: center;">साइन-इन (लॉगिन) करें</h2>
+        <p style="text-align: center; font-size: 13px; color: #666; margin-bottom: 10px;">वेबसाइट देखने के लिए कृपया लॉगिन या साइन-अप करें।</p>
+        
+        <input type="text" id="username" placeholder="पूरा नाम (Username)" style="display: none;">
+        <input type="email" id="email" placeholder="ईमेल आईडी">
+        <input type="password" id="password" placeholder="पासवर्ड">
+        
+        <button class="submit-btn" onclick="handleSubmit()">सबमिट करें</button>
+        <p class="msg" id="response-msg"></p>
+        
+        <div style="text-align: center; margin-top: 15px; font-size: 14px;">
+            <a href="javascript:void(0);" id="switch-mode-link" onclick="toggleAuthMode()" style="color: #0066cc;">नया अकाउंट बनाएं (Sign Up)</a>
+        </div>
+    </div>
+</div>
+
 <main>
 	<a href="pic" style="position:fixed;bottom: 0;">My image</a>
 </main>
-</body>
-  <video id="videoPlayer" width="640" height="360" vertical-align:bottom;" controls autoplay loop muted></video>
-  <script>
-    // Array of video sources
-    const videoSources = [
-      "video1.mp4",
-      "video2.mp4",
-      "video3.mp4"
-    ];
 
+  <video id="videoPlayer" width="640" height="360" controls autoplay loop muted></video>
+  
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwMLjC3JVfk0Hz5xc4yCPGwrcAvAdW-Qj-wJSileeAt3Mow-0_cpqBg5L2SF5AG8pmDCA/exec"; 
+
+    let isLoginMode = true;
+
+    // पेज लोड होते ही चेक करें
+    window.onload = function() {
+        const loggedUser = localStorage.getItem("loggedInUser");
+        if (loggedUser) {
+            // अगर पहले से लॉगिन है तो पॉप-अप हटा दें और लॉगआउट बटन दिखाएं
+            document.getElementById('authModal').style.display = "none";
+            document.getElementById('logout-btn').style.display = "inline-block";
+            document.getElementById('nav-login-btn').style.display = "none";
+            document.getElementById('nav-signup-btn').style.display = "none";
+        } else {
+            // अगर लॉगिन नहीं है तो हर हाल में पॉप-अप खुला रहेगा
+            document.getElementById('authModal').style.display = "flex";
+        }
+    }
+
+    function openModal(mode) {
+        isLoginMode = (mode === 'login');
+        updateModalUI();
+        document.getElementById('authModal').style.display = "flex";
+    }
+
+    function toggleAuthMode() {
+        isLoginMode = !isLoginMode;
+        updateModalUI();
+    }
+
+    function updateModalUI() {
+        document.getElementById('modal-title').innerText = isLoginMode ? "साइन-इन (लॉगिन) करें" : "नया अकाउंट साइन-अप करें";
+        document.getElementById('username').style.display = isLoginMode ? "none" : "block";
+        document.getElementById('switch-mode-link').innerText = isLoginMode ? "नया अकाउंट बनाएं (Sign Up)" : "पहले से अकाउंट है? Login करें";
+        document.getElementById('response-msg').innerText = "";
+    }
+
+    async function handleSubmit() {
+        const username = document.getElementById('username').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const msgElem = document.getElementById('response-msg');
+
+        if (!email || !password || (!isLoginMode && !username)) {
+            msgElem.style.color = "red";
+            msgElem.innerText = "कृपया सभी आवश्यक फील्ड्स भरें!";
+            return;
+        }
+
+        const payload = {
+            action: isLoginMode ? 'signin' : 'signup',
+            username: username,
+            email: email,
+            password: password
+        };
+
+        msgElem.style.color = "#333";
+        msgElem.innerText = "प्रक्रिया जारी है, कृपया प्रतीक्षा करें...";
+
+        try {
+            const response = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+            
+            msgElem.style.color = result.success ? "green" : "red";
+            msgElem.innerText = result.message;
+
+            if (result.success) {
+                localStorage.setItem("loggedInUser", result.username || email);
+                
+                setTimeout(() => {
+                    document.getElementById('authModal').style.display = "none";
+                    document.getElementById('logout-btn').style.display = "inline-block";
+                    document.getElementById('nav-login-btn').style.display = "none";
+                    document.getElementById('nav-signup-btn').style.display = "none";
+                    window.location.reload();
+                }, 600);
+            }
+        } catch (error) {
+            msgElem.style.color = "red";
+            msgElem.innerText = "सर्वर से कनेक्ट करने में त्रुटि हुई!";
+        }
+    }
+
+    function handleLogout() {
+        localStorage.removeItem("loggedInUser");
+        alert("आप सफलतापूर्वक लॉग आउट हो गए हैं।");
+        window.location.reload();
+    }
+  </script>
+
+  <script>
+    const videoSources = ["video1.mp4", "video2.mp4", "video3.mp4"];
     const videoPlayer = document.getElementById("videoPlayer");
     let currentVideoIndex = 0;
 
-    // Function to load the next video
     function playNextVideo() {
       if (currentVideoIndex < videoSources.length) {
         videoPlayer.src = videoSources[currentVideoIndex];
         videoPlayer.play();
         currentVideoIndex++;
       } else {
-        // Reset to the first video if you want to loop the playlist
         currentVideoIndex = 0;
         playNextVideo();
       }
     }
 
-    // Event listener for when the video ends
     videoPlayer.addEventListener("ended", playNextVideo);
-
-    // Start playing the first video
     playNextVideo();
-  </script></body>
+  </script>
+</body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
