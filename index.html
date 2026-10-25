@@ -22,7 +22,6 @@
             }
             return color;
         }
-
         setInterval(() => {
             document.body.style.backgroundColor = getRandomColor();
         }, 3500);
@@ -87,7 +86,6 @@ display: none;
 .item .active{
 display: block;
 }
-
 .toggle{
 	cursor: pointer;
 }
@@ -98,7 +96,6 @@ height:2px;
 position:relative;
 width:18px;
 }
-
 .bars::before,.bars::after{
 background:#999;
 content: "";
@@ -113,12 +110,9 @@ top:5px;
 .bars::after{
 top:-5px;
 }
-
-/*Tablet Menu */
 @media all and (min-width: 468px){
 	.menu{
 		justify-content:center;
-
 	}
 	.logo{
 		flex:1;
@@ -144,9 +138,7 @@ top:-5px;
 	}
 	.button.secondary a{
 		background: transparent;
-
 	}
-
 	.button a:hover{
 transition: all .25s;
 	}
@@ -157,12 +149,9 @@ transition: all .25s;
 .button.secondary a:hover{
 color:#ddd;
 }
-
 }
-
 @media all and (min-width: 768px){
 .item{
-
 	display:block;
 	width:auto;
 }
@@ -185,8 +174,6 @@ padding:15px 10px;
 padding-right: 0px;
 }
 }
-
-/* Modal Popup Styling - Always on top */
 .modal {
     display: flex; 
     position: fixed; 
@@ -228,7 +215,6 @@ padding-right: 0px;
 }
 .modal-content button.submit-btn:hover { background: #45a049; }
 .msg { margin-top: 10px; font-weight: bold; text-align: center; }
-
 #logout-btn {
     display: none;
     background: #d9534f;
@@ -262,16 +248,13 @@ $(document).ready(function(){
 	border: 3px solid white;
         border-radius: 25px;
     }
-
     @media (max-width: 600px) {
         video{ width: 90vw; height: 40vh; }
     }
-
     @media (min-width: 1200px) {
         video{ width: 40vw; height: 60vh; background-color: seagreen; }
     }
 </style>
-
 </head>
 <body>
 	<nav>
@@ -291,7 +274,6 @@ $(document).ready(function(){
 		</ul>
 	</nav>
 
-<!-- Login / Sign Up Modal Box -->
 <div id="authModal" class="modal" style="display: flex;">
     <div class="modal-content">
         <h2 id="modal-title" style="margin-bottom: 15px; color: #333; text-align: center;">साइन-इन (लॉगिन) करें</h2>
@@ -321,17 +303,14 @@ $(document).ready(function(){
 
     let isLoginMode = true;
 
-    // पेज लोड होते ही चेक करें
     window.onload = function() {
         const loggedUser = localStorage.getItem("loggedInUser");
         if (loggedUser) {
-            // अगर पहले से लॉगिन है तो पॉप-अप हटा दें और लॉगआउट बटन दिखाएं
             document.getElementById('authModal').style.display = "none";
             document.getElementById('logout-btn').style.display = "inline-block";
             document.getElementById('nav-login-btn').style.display = "none";
             document.getElementById('nav-signup-btn').style.display = "none";
         } else {
-            // अगर लॉगिन नहीं है तो हर हाल में पॉप-अप खुला रहेगा
             document.getElementById('authModal').style.display = "flex";
         }
     }
@@ -355,9 +334,9 @@ $(document).ready(function(){
     }
 
     async function handleSubmit() {
-        const username = document.getElementById('username').value;
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
+        const username = document.getElementById('username').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value.trim();
         const msgElem = document.getElementById('response-msg');
 
         if (!email || !password || (!isLoginMode && !username)) {
@@ -379,27 +358,35 @@ $(document).ready(function(){
         try {
             const response = await fetch(SCRIPT_URL, {
                 method: 'POST',
+                mode: 'no-cors', // Important nahi hai, par redirect rokne ke liye
+                // Apps Script ke liye text/plain bhejna best hai
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify(payload)
             });
-            const result = await response.json();
+            // no-cors me response.json() kaam nahi karta, isliye hum dusra tarika use karenge
+            // Lekin aapke purane script ke liye ye wala fetch best hai:
+            const res2 = await fetch(SCRIPT_URL, {
+                 method: 'POST',
+                 body: JSON.stringify(payload)
+            });
+            const result = await res2.json();
             
             msgElem.style.color = result.success ? "green" : "red";
             msgElem.innerText = result.message;
 
             if (result.success) {
                 localStorage.setItem("loggedInUser", result.username || email);
-                
                 setTimeout(() => {
                     document.getElementById('authModal').style.display = "none";
                     document.getElementById('logout-btn').style.display = "inline-block";
                     document.getElementById('nav-login-btn').style.display = "none";
                     document.getElementById('nav-signup-btn').style.display = "none";
-                    window.location.reload();
-                }, 600);
+                }, 800);
             }
         } catch (error) {
+            console.error(error);
             msgElem.style.color = "red";
-            msgElem.innerText = "सर्वर से कनेक्ट करने में त्रुटि हुई!";
+            msgElem.innerText = "सर्वर से कनेक्ट करने में त्रुटि हुई! Sheet Script ko New Version par deploy karo.";
         }
     }
 
@@ -414,7 +401,6 @@ $(document).ready(function(){
     const videoSources = ["video1.mp4", "video2.mp4", "video3.mp4"];
     const videoPlayer = document.getElementById("videoPlayer");
     let currentVideoIndex = 0;
-
     function playNextVideo() {
       if (currentVideoIndex < videoSources.length) {
         videoPlayer.src = videoSources[currentVideoIndex];
@@ -425,7 +411,6 @@ $(document).ready(function(){
         playNextVideo();
       }
     }
-
     videoPlayer.addEventListener("ended", playNextVideo);
     playNextVideo();
   </script>
